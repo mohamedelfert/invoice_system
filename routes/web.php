@@ -14,11 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();
+//Auth::routes(['register' => false]); if you don't want to show register page
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/{page}', 'AdminController@index');
+Route::group(['middleware' => 'auth'],function (){
+    Route::get('/{page}', 'AdminController@index');
+});
