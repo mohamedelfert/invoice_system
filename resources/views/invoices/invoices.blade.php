@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{$title = 'قائمه الفواتير'}}
+    {{$title}}
 @endsection
 @section('css')
     <!-- Internal Data table css -->
