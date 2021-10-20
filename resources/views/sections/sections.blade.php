@@ -91,6 +91,10 @@
                                                    data-id="{{ $sections->id }}" data-section_name="{{ $sections->section_name }}"
                                                    data-toggle="modal" href="#modaldemo9" title="حذف"><i class="las la-trash"></i>
                                                 </a>
+{{--                                                {!! Form::open(['url'=>'sections/'.$sections->id,'method'=>'delete','style'=>'display:inline']) !!}--}}
+{{--                                                {!! Form::text('id',$sections->id,['hidden']) !!}--}}
+{{--                                                {!! Form::submit('Delete',['class'=>'btn btn-danger small']) !!}--}}
+{{--                                                {!! Form::close() !!}--}}
                                             </td>
                                         </tr>
                                     @endforeach
