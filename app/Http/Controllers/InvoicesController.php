@@ -14,7 +14,8 @@ class InvoicesController extends Controller
      */
     public function index()
     {
-        return view('invoices.invoices');
+        $title = 'My Invoices';
+        return view('invoices.invoices',compact('title'));
     }
 
     /**

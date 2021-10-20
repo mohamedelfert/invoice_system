@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    {{$title = 'قائمه الفواتير'}}
+@endsection
 @section('css')
     <!-- Internal Data table css -->
     <link href="{{URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet" />
@@ -25,9 +28,10 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <div class="d-flex justify-content-between">
-                                <h4 class="card-title mg-b-0">قائمه الفواتير</h4>
-                            </div>
+                            <button type="button" class="btn btn-success"><i class="mdi mdi-plus"></i> اضافه فاتوره </button>
+                            <button type="button" class="btn btn-secondary"><i class="mdi mdi-archive"></i> نقل الي الارشيف </button>
+                            <button type="button" class="btn btn-danger"><i class="mdi mdi-delete"></i> حذف </button>
+                            <button type="button" class="btn btn-primary"><i class="mdi mdi-attachment"></i> تصدير Excel </button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

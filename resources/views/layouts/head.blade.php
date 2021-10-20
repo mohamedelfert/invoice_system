@@ -1,5 +1,5 @@
 <!-- Title -->
-<title> My Invoices </title>
+<title> @yield('title') </title>
 <!-- Favicon -->
 <link rel="icon" href="{{URL::asset('assets/img/brand/invoice_3.png')}}" type="image/x-icon"/>
 <!-- Icons css -->
