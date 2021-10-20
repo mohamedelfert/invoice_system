@@ -108,14 +108,16 @@ class SectionController extends Controller
      */
     public function update(Request $request)
     {
-        $rules = ['section_name' => 'required|min:5','description'  => 'required'];
+        $id = $request->id;
+        $rules = ['section_name' => 'required|min:5|unique:Sections,section_name,'.$id,'description'  => 'required'];
         $validate_msg_ar = [
             'section_name.required' => 'يجب كتابه اسم القسم',
+            'section_name.unique'   => 'اسم القسم مسجل مسبقا',
             'section_name.min'      => 'اسم القسم يجب ان يكون من 5 احرف علي الاقل',
             'description.required'  => 'يجب كتابه وصف للقسم'
         ];
         $data = $this->validate($request,$rules,$validate_msg_ar);
-        $id = $request->id;
+
         $section = Sections::find($id);
         $data['section_name'] = $request->section_name;
         $data['description']  = $request->description;
