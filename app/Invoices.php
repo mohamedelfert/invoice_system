@@ -28,4 +28,12 @@ class Invoices extends Model
         'user',
     ];
 
+    public function getSectionName(){
+        return $this->hasOne(Sections::class,'id','section');
+    }
+
+    public function getProductName(){
+        return $this->hasOne(Products::class,'id','product');
+    }
+
 }

@@ -59,7 +59,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <a class="modal-effect btn btn-outline-success" data-effect="effect-scale" data-toggle="modal" href="#modaldemo8">اضافة منتج</a>
+                            <a class="modal-effect btn btn-success" data-effect="effect-scale" data-toggle="modal" href="#modaldemo8"><i class="mdi mdi-plus"></i> اضافة منتج </a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

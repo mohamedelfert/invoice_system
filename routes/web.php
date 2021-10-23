@@ -24,6 +24,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'],function (){
     Route::resource('invoices','InvoicesController');
+    // this route to get products name for users by ajax when he chose section.
+    Route::get('/section/{id}','InvoicesController@getProductsName');
     Route::resource('sections','SectionController');
     Route::resource('products','ProductsController');
 });

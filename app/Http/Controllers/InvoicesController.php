@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Invoices;
+use App\Products;
+use App\Sections;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InvoicesController extends Controller
 {
@@ -15,7 +18,9 @@ class InvoicesController extends Controller
     public function index()
     {
         $title = 'قائمه الفواتير';
-        return view('invoices.invoices',compact('title'));
+        $sections = Sections::all();
+        $products = Products::all();
+        return view('invoices.invoices',compact('title','sections','products'));
     }
 
     /**
@@ -25,7 +30,10 @@ class InvoicesController extends Controller
      */
     public function create()
     {
-        //
+        $title = 'اضافه فاتوره جديده';
+        $sections = Sections::all();
+        $products = Products::all();
+        return view('invoices.add_invoice',compact('title','sections','products'));
     }
 
     /**
@@ -36,7 +44,7 @@ class InvoicesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -82,5 +90,14 @@ class InvoicesController extends Controller
     public function destroy(invoices $invoices)
     {
         //
+    }
+
+    /**
+     * This Function To Get Product Name And ID By section_id.
+     * using $id From Route /section/{id} With Ajax.
+     * */
+    public function getProductsName($id){
+        $productName = DB::table('products')->where('section_id',$id)->pluck('product_name','id');
+        return json_encode($productName);
     }
 }

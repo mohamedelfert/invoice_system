@@ -28,10 +28,10 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <button type="button" class="btn btn-success"><i class="mdi mdi-plus"></i> اضافه فاتوره </button>
-                            <button type="button" class="btn btn-secondary"><i class="mdi mdi-archive"></i> نقل الي الارشيف </button>
-                            <button type="button" class="btn btn-danger"><i class="mdi mdi-delete"></i> حذف </button>
-                            <button type="button" class="btn btn-primary"><i class="mdi mdi-attachment"></i> تصدير Excel </button>
+                            <a class="btn btn-success" href="{{url('invoices/create')}}"><i class="mdi mdi-plus"></i> اضافه فاتوره </a>
+                            <a class="btn btn-secondary"><i class="mdi mdi-archive"></i> نقل الي الارشيف </a>
+                            <a class="btn btn-danger"><i class="mdi mdi-delete"></i> حذف </a>
+                            <a class="btn btn-primary"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -67,21 +67,6 @@
                                             <td>غير مدفوعه</td>
                                             <td>لم يتم سداد الفاتوره</td>
                                         </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>87656456</td>
-                                            <td>22/07/2021</td>
-                                            <td>18/09/2021</td>
-                                            <td>لعب اطفال (سياره)</td>
-                                            <td>العاب</td>
-                                            <td>200$</td>
-                                            <td>15%</td>
-                                            <td>500$</td>
-                                            <td>3000$</td>
-                                            <td>مدفوعه</td>
-                                            <td></td>
-                                        </tr>
-
                                     </tbody>
                                 </table>
                             </div>

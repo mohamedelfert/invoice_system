@@ -1,0 +1,228 @@
+@extends('layouts.master')
+@section('title')
+    {{$title}}
+@endsection
+@section('css')
+    <!--- Internal Select2 css-->
+    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <!---Internal Fileupload css-->
+    <link href="{{ URL::asset('assets/plugins/fileuploads/css/fileupload.css') }}" rel="stylesheet" type="text/css" />
+    <!---Internal Fancy uploader css-->
+    <link href="{{ URL::asset('assets/plugins/fancyuploder/fancy_fileupload.css') }}" rel="stylesheet" />
+    <!--Internal Sumoselect css-->
+    <link rel="stylesheet" href="{{ URL::asset('assets/plugins/sumoselect/sumoselect-rtl.css') }}">
+    <!--Internal  TelephoneInput css-->
+    <link rel="stylesheet" href="{{ URL::asset('assets/plugins/telephoneinput/telephoneinput-rtl.css') }}">
+@endsection
+@section('page-header')
+    <!-- breadcrumb -->
+    <div class="breadcrumb-header justify-content-between">
+        <div class="my-auto">
+            <div class="d-flex">
+                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ قائمه الفواتير</span>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb -->
+@endsection
+@section('content')
+            <!-- row -->
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="{{ route('invoices.store') }}" method="post" enctype="multipart/form-data">
+                                {{ csrf_field() }}
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="invoice_number" class="control-label">رقم الفاتورة</label>
+                                        <input type="text" class="form-control" value="{{old('invoice_number')}}" id="invoice_number" name="invoice_number" placeholder="أدخل رقم الفاتورة" required>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="invoice_date" class="control-label">تاريخ الفاتورة</label>
+                                        <input class="form-control fc-datepicker" id="invoice_date" name="invoice_date" value="{{old('invoice_date')}}"
+                                               placeholder="YYYY-MM-DD" type="date"  required>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="due_date" class="control-label">تاريخ الاستحقاق</label>
+                                        <input class="form-control fc-datepicker" id="due_date" name="due_date" value="{{old('due_date')}}"
+                                               placeholder="YYYY-MM-DD" type="date" required>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="section" class="control-label">القسم</label>
+                                        <select name="section" id="section" class="form-control SlectBox" onclick="console.log($(this).val())"
+                                                onchange="console.log('Change Is Firing')">
+                                            <option value="" selected disabled>حدد القسم</option>
+                                            @foreach ($sections as $section)
+                                                <option value="{{ $section->id }}"> {{ $section->section_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="inputName" class="control-label">المنتج</label>
+                                        <select id="product" name="product" class="form-control">
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="amount_collect" class="control-label">مبلغ التحصيل</label>
+                                        <input type="text" class="form-control" id="amount_collect" name="amount_collect" placeholder="يرجي ادخال مبلغ التحصيل "
+                                               value="{{old('amount_collect')}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="commission" class="control-label">مبلغ العمولة</label>
+                                        <input type="text" class="form-control" id="commission" name="commission" placeholder="يرجي ادخال مبلغ العمولة "
+                                               value="{{old('commission')}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="discount" class="control-label">الخصم</label>
+                                        <input type="text" class="form-control" id="discount" name="discount" placeholder="يرجي ادخال مبلغ الخصم "
+                                               value="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="rate_vat" class="control-label">نسبة ضريبة القيمة المضافة</label>
+                                        <select name="rate_vat" id="rate_vat" class="form-control" onchange="myFunction()">
+                                            <option value="" selected disabled>حدد نسبة الضريبة</option>
+                                            <option value="5%">5%</option>
+                                            <option value="10%">10%</option>
+                                            <option value="13%">13%</option>
+                                            <option value="14%">14%</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="value_vat" class="control-label">قيمة ضريبة القيمة المضافة</label>
+                                        <input type="text" class="form-control" id="value_vat" name="value_vat" readonly>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="total" class="control-label">الاجمالي شامل الضريبة</label>
+                                        <input type="text" class="form-control" id="total" name="total" readonly>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="note">ملاحظات</label>
+                                        <textarea class="form-control" id="note" name="note" rows="3">{{old('note')}}</textarea>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <div class="col-sm-12 col-md-12">
+                                    <h5 class="card-title">المرفقات</h5>
+                                    <input type="file" name="file" id="file" class="dropify" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" />
+                                    <p class="text-danger" style="margin-top: 5px">* صيغة المرفق pdf, jpeg , jpg , png </p>
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-success">حفظ البيانات</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- row closed -->
+        </div>
+        <!-- Container closed -->
+    </div>
+    <!-- main-content closed -->
+@endsection
+@section('js')
+    <!-- Internal Select2 js-->
+    <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+    <!--Internal Fileuploads js-->
+    <script src="{{ URL::asset('assets/plugins/fileuploads/js/fileupload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fileuploads/js/file-upload.js') }}"></script>
+    <!--Internal Fancy uploader js-->
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.ui.widget.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.fileupload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.fancy-fileupload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/fancy-uploader.js') }}"></script>
+    <!--Internal  Form-elements js-->
+    <script src="{{ URL::asset('assets/js/advanced-form-elements.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/select2.js') }}"></script>
+    <!--Internal Sumoselect js-->
+    <script src="{{ URL::asset('assets/plugins/sumoselect/jquery.sumoselect.js') }}"></script>
+    <!--Internal  jquery.maskedinput js -->
+    <script src="{{ URL::asset('assets/plugins/jquery.maskedinput/jquery.maskedinput.js') }}"></script>
+    <!--Internal  spectrum-colorpicker js -->
+    <script src="{{ URL::asset('assets/plugins/spectrum-colorpicker/spectrum.js') }}"></script>
+    <!-- Internal form-elements js -->
+    <script src="{{ URL::asset('assets/js/form-elements.js') }}"></script>
+
+    {{-- Start This Ajax Code To Get Product Name And ID --}}
+    <script>
+        $(document).ready(function() {
+            $('select[name="section"]').on('change', function() {
+                var section_id = $(this).val();
+                if (section_id) {
+                    $.ajax({
+                        url: "{{ URL::to('section') }}/" + section_id,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="product"]').empty();
+                            $.each(data, function(key, value) {
+                                $('select[name="product"]').append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        },
+                    });
+                } else {
+                    console.log('AJAX Load Did Not Work');
+                }
+            });
+        });
+    </script>
+    {{-- End This Ajax Code To Get Product Name And ID --}}
+
+    {{-- Start This To Get And Calculate commision after discount , value vat and total --}}
+    <script>
+        function myFunction() {
+            var commission = parseFloat(document.getElementById("commission").value);
+            var discount   = parseFloat(document.getElementById("discount").value);
+            var rate_vat   = parseFloat(document.getElementById("rate_vat").value);
+
+            var amount_commission = commission - discount;
+
+            if (typeof commission === 'undefined' || !commission) {
+                alert('يرجي ادخال مبلغ العمولة ');
+            } else {
+                var Value_vat = amount_commission * rate_vat / 100;
+                var Total     = parseFloat(Value_vat + amount_commission);
+                sum_commision = parseFloat(Value_vat).toFixed(2);
+                sum_total     = parseFloat(Total).toFixed(2);
+                document.getElementById("value_vat").value = sum_commision;
+                document.getElementById("total").value = sum_total;
+            }
+
+        };
+    </script>
+    {{-- End This To Get And Calculate commision after discount , value vat and total --}}
+@endsection
