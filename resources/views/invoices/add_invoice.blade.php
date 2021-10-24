@@ -26,6 +26,27 @@
     <!-- breadcrumb -->
 @endsection
 @section('content')
+
+    @if(session()->has('errors'))
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{$error}}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(session()->has('success'))
+        <div class="alert alert-success">
+            {{session()->get('success')}}
+            {{session()->forget('success')}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
             <!-- row -->
             <div class="row">
                 <div class="col-lg-12 col-md-12">
@@ -56,8 +77,8 @@
 
                                 <div class="row">
                                     <div class="col">
-                                        <label for="section" class="control-label">القسم</label>
-                                        <select name="section" id="section" class="form-control SlectBox" onclick="console.log($(this).val())"
+                                        <label for="section_id" class="control-label">القسم</label>
+                                        <select name="section_id" id="section_id" class="form-control SlectBox" onclick="console.log($(this).val())"
                                                 onchange="console.log('Change Is Firing')">
                                             <option value="" selected disabled>حدد القسم</option>
                                             @foreach ($sections as $section)
@@ -67,8 +88,8 @@
                                     </div>
 
                                     <div class="col">
-                                        <label for="inputName" class="control-label">المنتج</label>
-                                        <select id="product" name="product" class="form-control">
+                                        <label for="product_id" class="control-label">المنتج</label>
+                                        <select id="product_id" name="product_id" class="form-control">
                                         </select>
                                     </div>
 
@@ -98,10 +119,10 @@
                                         <label for="rate_vat" class="control-label">نسبة ضريبة القيمة المضافة</label>
                                         <select name="rate_vat" id="rate_vat" class="form-control" onchange="myFunction()">
                                             <option value="" selected disabled>حدد نسبة الضريبة</option>
-                                            <option value="5%">5%</option>
-                                            <option value="10%">10%</option>
-                                            <option value="13%">13%</option>
-                                            <option value="14%">14%</option>
+                                            <option value="0.05">5%</option>
+                                            <option value="0.10">10%</option>
+                                            <option value="0.13">13%</option>
+                                            <option value="0.14">14%</option>
                                         </select>
                                     </div>
                                 </div>
@@ -109,6 +130,17 @@
                                 <br>
 
                                 <div class="row">
+                                    <div class="col">
+                                        <label for="status" class="control-label">حاله الفاتوره</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="غير مدفوعه" selected>غير مدفوعه</option>
+                                            <option value="مدفوعه">مدفوعه</option>
+                                            <option value="مدفوعه جزئيا">مدفوعه جزئيا</option>
+                                            <option value="مؤجله">مؤجله</option>
+
+                                        </select>
+                                    </div>
+
                                     <div class="col">
                                         <label for="value_vat" class="control-label">قيمة ضريبة القيمة المضافة</label>
                                         <input type="text" class="form-control" id="value_vat" name="value_vat" readonly>
@@ -133,7 +165,7 @@
 
                                 <div class="col-sm-12 col-md-12">
                                     <h5 class="card-title">المرفقات</h5>
-                                    <input type="file" name="file" id="file" class="dropify" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" />
+                                    <input type="file" name="file" id="file" class="dropify" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" required/>
                                     <p class="text-danger" style="margin-top: 5px">* صيغة المرفق pdf, jpeg , jpg , png </p>
                                 </div>
 
@@ -180,7 +212,7 @@
     {{-- Start This Ajax Code To Get Product Name And ID --}}
     <script>
         $(document).ready(function() {
-            $('select[name="section"]').on('change', function() {
+            $('select[name="section_id"]').on('change', function() {
                 var section_id = $(this).val();
                 if (section_id) {
                     $.ajax({
@@ -188,9 +220,9 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            $('select[name="product"]').empty();
+                            $('select[name="product_id"]').empty();
                             $.each(data, function(key, value) {
-                                $('select[name="product"]').append('<option value="' + key + '">' + value + '</option>');
+                                $('select[name="product_id"]').append('<option value="' + key + '">' + value + '</option>');
                             });
                         },
                     });
@@ -214,7 +246,7 @@
             if (typeof commission === 'undefined' || !commission) {
                 alert('يرجي ادخال مبلغ العمولة ');
             } else {
-                var Value_vat = amount_commission * rate_vat / 100;
+                var Value_vat = amount_commission * rate_vat;
                 var Total     = parseFloat(Value_vat + amount_commission);
                 sum_commision = parseFloat(Value_vat).toFixed(2);
                 sum_total     = parseFloat(Total).toFixed(2);

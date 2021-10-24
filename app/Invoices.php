@@ -16,8 +16,10 @@ class Invoices extends Model
         'invoice_number',
         'invoice_date',
         'due_date',
-        'product',
-        'section',
+        'product_id',
+        'section_id',
+        'amount_collect',
+        'commission',
         'discount',
         'rate_vat',
         'value_vat',
@@ -25,15 +27,15 @@ class Invoices extends Model
         'status',
         'value_status',
         'note',
-        'user',
+        'payment_date'
     ];
 
     public function getSectionName(){
-        return $this->hasOne(Sections::class,'id','section');
+        return $this->hasOne(Sections::class,'id','section_id');
     }
 
     public function getProductName(){
-        return $this->hasOne(Products::class,'id','product');
+        return $this->hasOne(Products::class,'id','product_id');
     }
 
 }

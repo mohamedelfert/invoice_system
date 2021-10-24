@@ -23,6 +23,27 @@
     <!-- breadcrumb -->
 @endsection
 @section('content')
+
+    @if(session()->has('errors'))
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{$error}}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(session()->has('success'))
+        <div class="alert alert-success">
+            {{session()->get('success')}}
+            {{session()->forget('success')}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
             <!-- row -->
             <div class="row">
                 <div class="col-xl-12">
@@ -39,34 +60,37 @@
                                     <thead>
                                         <tr>
                                             <th class="wd-5p border-bottom-0">#</th>
-                                            <th class="wd-15p border-bottom-0">رقم الفاتوره</th>
-                                            <th class="wd-20p border-bottom-0">تاريخ الفاتوره</th>
-                                            <th class="wd-15p border-bottom-0">تاريخ الاستحقاق</th>
-                                            <th class="wd-25p border-bottom-0">المنتج</th>
-                                            <th class="wd-15p border-bottom-0">القسم</th>
-                                            <th class="wd-15p border-bottom-0">الخصم</th>
-                                            <th class="wd-15p border-bottom-0">نسبه الضريبه</th>
-                                            <th class="wd-15p border-bottom-0">قيمه الضريبه</th>
-                                            <th class="wd-15p border-bottom-0">الاجمالي</th>
-                                            <th class="wd-25p border-bottom-0">الحاله</th>
-                                            <th class="wd-25p border-bottom-0">ملاحظات</th>
+                                            <th class="wd-10p border-bottom-0">رقم الفاتوره</th>
+                                            <th class="wd-10p border-bottom-0">تاريخ الفاتوره</th>
+                                            <th class="wd-10p border-bottom-0">تاريخ الاستحقاق</th>
+                                            <th class="wd-10p border-bottom-0">المنتج</th>
+                                            <th class="wd-10p border-bottom-0">القسم</th>
+                                            <th class="wd-5p border-bottom-0">الخصم</th>
+                                            <th class="wd-5p border-bottom-0">نسبه الضريبه</th>
+                                            <th class="wd-5p border-bottom-0">قيمه الضريبه</th>
+                                            <th class="wd-5p border-bottom-0">الاجمالي</th>
+                                            <th class="wd-10p border-bottom-0">الحاله</th>
+                                            <th class="wd-30p border-bottom-0">ملاحظات</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                    <?php $i = 1; ?>
+                                    @foreach($all_invoices as $invoice)
                                         <tr>
-                                            <td>1</td>
-                                            <td>121564545</td>
-                                            <td>15/01/2021</td>
-                                            <td>18/05/2021</td>
-                                            <td>لعب اطفال (سياره)</td>
-                                            <td>العاب</td>
-                                            <td>500$</td>
-                                            <td>10%</td>
-                                            <td>1000$</td>
-                                            <td>3500$</td>
-                                            <td>غير مدفوعه</td>
-                                            <td>لم يتم سداد الفاتوره</td>
+                                            <td>{{$i++}}</td>
+                                            <td>{{$invoice->invoice_number}}</td>
+                                            <td>{{$invoice->invoice_date}}</td>
+                                            <td>{{$invoice->due_date}}</td>
+                                            <td>{{$invoice->getProductName->product_name}}</td>
+                                            <td>{{$invoice->getSectionName->section_name}}</td>
+                                            <td>{{$invoice->discount}}</td>
+                                            <td>{{$invoice->rate_vat}}</td>
+                                            <td>{{$invoice->value_vat}}</td>
+                                            <td>{{$invoice->total}}</td>
+                                            <td>{{$invoice->status}}</td>
+                                            <td>{{$invoice->note}}</td>
                                         </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>

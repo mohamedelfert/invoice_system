@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 23, 2021 at 09:29 PM
+-- Generation Time: Oct 23, 2021 at 10:53 PM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.2.5
 
@@ -48,16 +48,18 @@ CREATE TABLE `invoices` (
   `invoice_number` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `invoice_date` date NOT NULL,
   `due_date` date NOT NULL,
+  `section_id` int(10) UNSIGNED NOT NULL,
   `product` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `section` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `discount` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rate_vat` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount_collect` decimal(8,2) NOT NULL,
+  `commission` decimal(8,2) NOT NULL,
+  `discount` decimal(8,2) NOT NULL,
+  `rate_vat` decimal(8,2) NOT NULL,
   `value_vat` decimal(8,2) NOT NULL,
   `total` decimal(8,2) NOT NULL,
   `status` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `value_status` int(11) NOT NULL,
   `note` text COLLATE utf8mb4_unicode_ci,
-  `user` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payment_date` date DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -116,14 +118,14 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(5, '2014_10_12_000000_create_users_table', 1),
-(6, '2014_10_12_100000_create_password_resets_table', 1),
-(7, '2019_08_19_000000_create_failed_jobs_table', 1),
-(8, '2021_10_18_164631_create_invoices_table', 1),
-(9, '2021_10_20_100349_create_sections_table', 2),
-(10, '2021_10_22_105138_create_products_table', 3),
-(11, '2021_10_23_180539_create_invoices_details_table', 4),
-(12, '2021_10_23_192345_create_invoices_attachments_table', 5);
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_resets_table', 1),
+(3, '2019_08_19_000000_create_failed_jobs_table', 1),
+(4, '2021_10_20_100349_create_sections_table', 1),
+(5, '2021_10_21_164631_create_invoices_table', 1),
+(6, '2021_10_22_105138_create_products_table', 1),
+(7, '2021_10_23_180539_create_invoices_details_table', 1),
+(8, '2021_10_23_192345_create_invoices_attachments_table', 1);
 
 -- --------------------------------------------------------
 
@@ -157,14 +159,20 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `product_name`, `description`, `section_id`, `created_at`, `updated_at`) VALUES
-(6, 'تيشيرت اطفال', 'تيشيرت اطفال عمر 5 سنوات', 5, '2021-10-22 10:23:02', '2021-10-22 10:23:02'),
-(7, 'فيلم جديد 2020', 'فيلم مغامرات واكشن', 6, '2021-10-22 10:23:10', '2021-10-22 10:23:50'),
-(19, 'لعبه سيارات سباق', 'لعبه', 14, '2021-10-23 12:59:33', '2021-10-23 12:59:33'),
-(20, 'تيشيرت اطفال بناتي', 'بناتي', 5, '2021-10-23 12:59:48', '2021-10-23 12:59:48'),
-(21, 'لعبه طائرات', 'طائره لاسلكيه', 14, '2021-10-23 13:00:07', '2021-10-23 13:00:07'),
-(22, 'فيلم مارفل', 'مارفل', 6, '2021-10-23 13:00:28', '2021-10-23 13:00:28'),
-(23, 'كتاب مغامرات', 'مغامره', 11, '2021-10-23 13:00:50', '2021-10-23 13:00:50'),
-(24, 'منتج رقم 1', 'منتج جديد', 14, '2021-10-23 13:01:16', '2021-10-23 13:01:16');
+(1, 'قروض سيارات', 'قرض سياره ميسر', 1, '2021-10-23 13:59:09', '2021-10-23 13:59:09'),
+(2, 'قرض شباب', 'قرض للشباب', 1, '2021-10-23 13:59:31', '2021-10-23 13:59:31'),
+(3, 'قرض الميسر', 'قرض ميسر', 1, '2021-10-23 13:59:45', '2021-10-23 13:59:45'),
+(4, 'قرض اسكان', 'قرض للاسكان', 1, '2021-10-23 13:59:58', '2021-10-23 13:59:58'),
+(5, 'قروض متعثره', 'متعثره', 1, '2021-10-23 14:00:11', '2021-10-23 14:00:11'),
+(6, 'قروض مشتروات', 'مشتروات', 2, '2021-10-23 14:00:27', '2021-10-23 14:00:27'),
+(7, 'قرض للشباب', 'قرض شباب مخفض', 2, '2021-10-23 14:00:42', '2021-10-23 14:00:42'),
+(8, 'قرض سياره', 'قرض سياره جديده', 2, '2021-10-23 14:00:56', '2021-10-23 14:00:56'),
+(9, 'تمويل عقاري', 'عقار', 2, '2021-10-23 14:01:07', '2021-10-23 14:01:07'),
+(10, 'تمويل اسكان اجتماعي', 'اسكان', 3, '2021-10-23 14:01:23', '2021-10-23 14:01:23'),
+(11, 'قروض ميسره', 'ميسره فيصل', 3, '2021-10-23 14:01:36', '2021-10-23 14:01:36'),
+(12, 'قروض صغيره', 'قروض صغيره', 4, '2021-10-23 14:01:52', '2021-10-23 14:01:52'),
+(13, 'قروض مشتريات', 'مشتريات', 5, '2021-10-23 14:02:20', '2021-10-23 14:02:20'),
+(14, 'قروض عقاريه', 'عقارات', 6, '2021-10-23 14:02:33', '2021-10-23 14:02:33');
 
 -- --------------------------------------------------------
 
@@ -186,10 +194,12 @@ CREATE TABLE `sections` (
 --
 
 INSERT INTO `sections` (`id`, `section_name`, `description`, `created_by`, `created_at`, `updated_at`) VALUES
-(5, 'قسم ملابس', 'قسم للملابس الجاهزه', 'ahmed elsyed', '2021-10-20 09:54:30', '2021-10-20 09:54:30'),
-(6, 'قسم افلام', 'مجموعه رائعه من الافلام', 'ahmed elsyed', '2021-10-20 11:08:34', '2021-10-20 11:08:34'),
-(11, 'قسم الكتب', 'وصف للقسم', 'mohamed Ibrahiem', '2021-10-20 13:16:12', '2021-10-23 12:58:26'),
-(14, 'قسم العاب', 'اكبر مجموعه العاب خاصه للاطفال', 'ahmed elsyed', '2021-10-20 14:06:53', '2021-10-20 14:06:53');
+(1, 'بنك مصر', 'البنك المصري', 'mohamed Ibrahiem', '2021-10-23 13:57:19', '2021-10-23 13:57:19'),
+(2, 'البنك الاهلي', 'البنك الاهلي المصري', 'mohamed Ibrahiem', '2021-10-23 13:57:32', '2021-10-23 13:57:32'),
+(3, 'بنك فيصل', 'بنك فيصل الاسلامي', 'mohamed Ibrahiem', '2021-10-23 13:57:48', '2021-10-23 13:57:48'),
+(4, 'البنك العربي الافريقي', 'البنك الافريقي', 'mohamed Ibrahiem', '2021-10-23 13:58:08', '2021-10-23 13:58:08'),
+(5, 'بنك CIB', 'CIB Bank', 'mohamed Ibrahiem', '2021-10-23 13:58:27', '2021-10-23 13:58:27'),
+(6, 'بنك ابوظبي', 'بنك ابوظبي الاسلامي', 'mohamed Ibrahiem', '2021-10-23 13:58:44', '2021-10-23 13:58:44');
 
 -- --------------------------------------------------------
 
@@ -213,8 +223,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'mohamed Ibrahiem', 'mohamed@yahoo.com', NULL, '$2y$10$nGABnAcnltkHt96SgFnQYuIzmcKIDNADuJXx4FEPh5snsnz/1iJO6', 'nbw8yCs2ErOvHDp8pUFOFUlYsV2UjGwe4nzCHwcjLwPtVpjMboczCHh4VkIU', '2021-10-18 15:11:14', '2021-10-18 15:11:14'),
-(2, 'ahmed elsyed', 'ahmed2020@yahoo.com', NULL, '$2y$10$Ht/xAd4ZxJdIlgcO.xoDHuwzI8aGYFiTAGlQtlK6PpvWhe7PFgdta', 'GmCko4ErZmkZWOIkUV7kNoux76HuH7ar8Iu5Ilh8yd673WetxNlow9NqcxtB', '2021-10-20 09:54:04', '2021-10-20 09:54:04');
+(1, 'mohamed Ibrahiem', 'mohamed@yahoo.com', NULL, '$2y$10$V87Qp1Eyv84ozTPFQ20ZIOnGaP56GNTDBbH/uo1It2VMuRHGkOIj2', 'UEGgA1dqrVAkNxEhqlKfS4UTpNP2svfiNNa2OlEsXGSwQfQh3JYqCe7wdsGQ', '2021-10-23 13:56:33', '2021-10-23 13:56:33');
 
 --
 -- Indexes for dumped tables
@@ -231,7 +240,8 @@ ALTER TABLE `failed_jobs`
 --
 ALTER TABLE `invoices`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `invoices_invoice_number_unique` (`invoice_number`);
+  ADD UNIQUE KEY `invoices_invoice_number_unique` (`invoice_number`),
+  ADD KEY `invoices_section_id_foreign` (`section_id`);
 
 --
 -- Indexes for table `invoices_attachments`
@@ -311,29 +321,35 @@ ALTER TABLE `invoices_details`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD CONSTRAINT `invoices_section_id_foreign` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `invoices_attachments`
