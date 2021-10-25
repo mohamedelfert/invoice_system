@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Invoices;
+use App\InvoicesAttachments;
 use App\InvoicesDetails;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class InvoicesDetailsController extends Controller
 {
@@ -12,9 +15,13 @@ class InvoicesDetailsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //
+        $title = 'تفاصيل الفاتوره';
+        $invoice         = Invoices::find($id);
+        $invoice_details = InvoicesDetails::where('invoice_id',$id)->get();
+        $invoice_attach  = InvoicesAttachments::where('invoice_id',$id)->get();
+        return view('invoices.invoice_details',compact('title','invoice','invoice_details','invoice_attach'));
     }
 
     /**
@@ -78,8 +85,21 @@ class InvoicesDetailsController extends Controller
      * @param  \App\invoicesDetails  $invoicesDetails
      * @return \Illuminate\Http\Response
      */
-    public function destroy(invoicesDetails $invoicesDetails)
+    public function destroy(Request $request)
     {
-        //
+        InvoicesAttachments::find($request->file_id)->delete();
+        Storage::disk('public_path')->delete($request->invoice_number.'/'.$request->file_name);
+        session()->flash('success','تم حذف الملف بنجاح');
+        return back();
+    }
+
+    public function openFile($invoice_number,$file_name){
+        $viewFile = Storage::disk('public_path')->getDriver()->getAdapter()->applyPathPrefix($invoice_number.'/'.$file_name);
+        return response()->file($viewFile);
+    }
+
+    public function downloadFile($invoice_number,$file_name){
+        $download = Storage::disk('public_path')->getDriver()->getAdapter()->applyPathPrefix($invoice_number.'/'.$file_name);
+        return response()->download($download);
     }
 }

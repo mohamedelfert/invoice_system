@@ -30,6 +30,10 @@ class Invoices extends Model
         'payment_date'
     ];
 
+    public function getUser(){
+        return $this->hasOne(InvoicesDetails::class,'invoice_id','id');
+    }
+
     public function getSectionName(){
         return $this->hasOne(Sections::class,'id','section_id');
     }

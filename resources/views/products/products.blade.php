@@ -149,8 +149,7 @@
                 <!-- This Is For Add New Section -->
 
                 <!-- edit Product -->
-                <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                     aria-hidden="true">
+                <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -193,7 +192,7 @@
                 <!-- edit Product -->
 
                 <!-- delete Product -->
-                <div class="modal" id="modaldemo9">
+                <div class="modal fade" id="modaldemo9">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content modal-content-demo">
                             <div class="modal-header">

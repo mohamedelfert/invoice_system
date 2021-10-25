@@ -174,7 +174,7 @@
                 <!-- edit section -->
 
                 <!-- delete section -->
-                <div class="modal" id="modaldemo9">
+                <div class="modal fade" id="modaldemo9">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content modal-content-demo">
                             <div class="modal-header">

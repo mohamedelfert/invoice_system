@@ -70,7 +70,7 @@
                                             <th class="wd-5p border-bottom-0">قيمه الضريبه</th>
                                             <th class="wd-5p border-bottom-0">الاجمالي</th>
                                             <th class="wd-10p border-bottom-0">الحاله</th>
-                                            <th class="wd-30p border-bottom-0">ملاحظات</th>
+                                            <th class="wd-25p border-bottom-0">ملاحظات</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -78,7 +78,9 @@
                                     @foreach($all_invoices as $invoice)
                                         <tr>
                                             <td>{{$i++}}</td>
-                                            <td>{{$invoice->invoice_number}}</td>
+                                            <td>
+                                                <a href="{{url('invoice_details/' . $invoice->id)}}">{{$invoice->invoice_number}}</a>
+                                            </td>
                                             <td>{{$invoice->invoice_date}}</td>
                                             <td>{{$invoice->due_date}}</td>
                                             <td>{{$invoice->getProductName->product_name}}</td>
@@ -87,7 +89,17 @@
                                             <td>{{$invoice->rate_vat}}</td>
                                             <td>{{$invoice->value_vat}}</td>
                                             <td>{{$invoice->total}}</td>
-                                            <td>{{$invoice->status}}</td>
+                                            <td>
+                                                @if($invoice->value_status == 1)
+                                                    <span class="badge badge-pill badge-danger">{{$invoice->status}}</span>
+                                                @elseif($invoice->value_status == 2)
+                                                    <span class="badge badge-pill badge-success">{{$invoice->status}}</span>
+                                                @elseif($invoice->value_status == 3)
+                                                    <span class="badge badge-pill badge-warning">{{$invoice->status}}</span>
+                                                @elseif($invoice->value_status == 4)
+                                                    <span class="badge badge-pill badge-info">{{$invoice->status}}</span>
+                                                @endif
+                                            </td>
                                             <td>{{$invoice->note}}</td>
                                         </tr>
                                     @endforeach
