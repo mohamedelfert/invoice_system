@@ -87,6 +87,9 @@ class InvoicesDetailsController extends Controller
      */
     public function destroy(Request $request)
     {
+        /**
+        * this for delete file from invoices details view
+         */
         InvoicesAttachments::find($request->file_id)->delete();
         Storage::disk('public_path')->delete($request->invoice_number.'/'.$request->file_name);
         session()->flash('success','تم حذف الملف بنجاح');

@@ -52,6 +52,10 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="main-content-label mg-b-5">
+                                <a class="btn btn-primary" href="../"><i class="mdi mdi-keyboard-return"></i> رجوع للفواتير </a>
+                            </div>
+                            <hr>
                             <form action="{{ url('invoices/'.$invoice->id) }}" method="post" enctype="multipart/form-data">
                                 {{method_field('put')}}
                                 {{ csrf_field() }}

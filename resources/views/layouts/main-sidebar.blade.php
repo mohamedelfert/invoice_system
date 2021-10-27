@@ -32,6 +32,7 @@
                     <li><a class="slide-item" href="{{ url('/' . $page='chart-flot') }}">الفواتير المدفوعه</a></li>
                     <li><a class="slide-item" href="{{ url('/' . $page='chart-chartjs') }}">الفواتير الغير مدفوعه</a></li>
                     <li><a class="slide-item" href="{{ url('/' . $page='chart-echart') }}">الفواتير المدفوعه جزئيا</a></li>
+                    <li><a class="slide-item" href="{{ url('/' . $page='chat') }}">الفواتير المؤرشفه</a></li>
                 </ul>
             </li>
             <li class="side-item side-item-category">التقارير</li>

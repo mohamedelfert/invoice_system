@@ -310,28 +310,31 @@ class InvoicesController extends Controller
      * @param  \App\invoices  $invoices
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request)
     {
+        $id = $request->id;
 
-        if ($id != null){
-            $del = Invoices::find($id);
-            $del->delete();
-        }elseif (\request()->has('restore') and \request()->has('id')){
-            Invoices::whereIn('id',\request('id'))->restore();
-        }elseif (\request()->has('forcedelete') and \request()->has('id')){
-            Invoices::whereIn('id',\request('id'))->forceDelete();
-        }elseif (\request()->has('delete') and \request()->has('id')){
-            Invoices::destroy(\request('id'));
+        if ($request->has('archive') and $request->has('id')) {
+
+            $invoices = Invoices::where('id', $id)->first();
+            $invoices->delete();
+            InvoicesDetails::where('invoice_id', $id)->delete();
+            InvoicesAttachments::where('invoice_id', $id)->delete();
+            session()->flash('archive_invoice');
+
+        }elseif ($request->has('force_delete') and $request->has('id')){
+
+            $invoices = Invoices::where('id', $id)->first();
+            $attachment = InvoicesAttachments::where('invoice_id',$id)->first();
+            if (!empty($attachment->invoice_number)){
+                Storage::disk('public_path')->deleteDirectory($attachment->invoice_number);
+            }
+            $invoices->forceDelete();
+            session()->flash('delete_invoice');
+
         }
 
-//        Invoices::find($id)->delete();
-//        Storage::deleteDirectory($request->invoice_number . '/' . $request->file_name);
-//        Storage::disk('public_path')->delete($request->invoice_number.'/'.$request->file_name);
-//        session()->flash('success','تم حذف الفاتوره بنجاح');
-//        return back();
-        echo $id;
-        echo "<br>";
-        return $request;
+        return back();
     }
 
     /**
