@@ -9,6 +9,7 @@ use App\Products;
 use App\Sections;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class InvoicesController extends Controller
 {
@@ -49,15 +50,15 @@ class InvoicesController extends Controller
             'invoice_number' => 'required|min:5|unique:Invoices',
             'invoice_date'   => 'required',
             'due_date'       => 'required',
-            'product_id'     => 'required',
             'section_id'     => 'required',
+            'product_id'     => 'required',
             'amount_collect' => 'required',
             'commission'     => 'required',
             'discount'       => 'required',
             'rate_vat'       => 'required',
             'status'         => 'required',
             'note'           => 'required',
-            'file'           => 'required'
+            'file'           => 'required|mimes:pdf,jpg,jpeg,png'
         ];
         $validate_msg_ar = [
             'invoice_number.required' => 'يجب كتابه رقم الفاتوره',
@@ -65,15 +66,16 @@ class InvoicesController extends Controller
             'invoice_number.unique'   => 'رقم الفاتوره مسجل مسبقا',
             'invoice_date.required'   => 'يجب ادخال تاريخ الفاتوره',
             'due_date.required'       => 'يجب ادخال تاريخ استحقاق الفاتوره',
-            'product_id.required'     => 'يجب اختيار المنتج',
             'section_id.required'     => 'يجب اختيار القسم',
-            'amount_collect.required' => 'يجب كتابه المبلغ المستحق',
+            'product_id.required'     => 'يجب اختيار المنتج',
+            'amount_collect.required' => 'يجب كتابه مبلغ التحصيل',
             'commission.required'     => 'يجب كتابه العموله',
             'discount.required'       => 'يجب كتابه الخصم',
             'rate_vat.required'       => 'يجب اختيار نسبه الضريبه',
             'status.required'         => 'يجب اختيار حاله الفاتوره',
             'note.required'           => 'يجب كتابه ملاحظات للفاتوره',
-            'file.required'           => 'يجب ارفاق ملف او صوره للفاتوره'
+            'file.required'           => 'يجب ارفاق ملف او صوره للفاتوره',
+            'file.mimes'              => 'يجب ان يكون الملف باحد الصيغ : PDF , JPG , JPEG , PNG'
         ];
         $data = $this->validate($request,$rules,$validate_msg_ar);
 
@@ -93,7 +95,6 @@ class InvoicesController extends Controller
         $data['total']          = $request->total;
 
         $data['status'] = $request->status;
-
         if ($data['status'] === "غير مدفوعه"){
             $data['value_status'] = "1";
         }elseif ($data['status'] === "مدفوعه"){
@@ -105,21 +106,18 @@ class InvoicesController extends Controller
         }
 
         $data['note'] = $request->note;
-
         Invoices::create($data);
 
         /**
         * to add information in invoicesDetails Table
         **/
         $invoice_id = Invoices::latest()->first()->id;
-
         $data['invoice_id'] = $invoice_id;
         $data['invoice_number'] = $request->invoice_number;
         $data['product']     = $request->product_id;
         $data['section']     = $request->section_id;
 
         $data['status'] = $request->status;
-
         if ($data['status'] === "غير مدفوعه"){
             $data['value_status'] = "1";
         }elseif ($data['status'] === "مدفوعه"){
@@ -132,7 +130,6 @@ class InvoicesController extends Controller
 
         $data['note'] = $request->note;
         $data['user'] = auth()->user()->name;
-
         InvoicesDetails::create($data);
 
         /**
@@ -157,8 +154,6 @@ class InvoicesController extends Controller
 
         session()->flash('success','تم اضافه الفاتوره بنجاح');
         return redirect('invoices');
-
-
     }
 
     /**
@@ -178,9 +173,12 @@ class InvoicesController extends Controller
      * @param  \App\invoices  $invoices
      * @return \Illuminate\Http\Response
      */
-    public function edit(invoices $invoices)
+    public function edit($id)
     {
-        //
+        $title = 'تعديل فاتوره';
+        $invoice = Invoices::find($id);
+        $sections = Sections::all();
+        return view('invoices.edit_invoice',compact('title','invoice','sections'));
     }
 
     /**
@@ -190,9 +188,120 @@ class InvoicesController extends Controller
      * @param  \App\invoices  $invoices
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, invoices $invoices)
+    public function update(Request $request,$id)
     {
-        //
+        $rules = [
+            'invoice_number' => 'required|min:5|unique:Invoices,invoice_number,'.$id,
+            'invoice_date'   => 'required',
+            'due_date'       => 'required',
+            'section_id'     => 'required',
+            'product_id'     => 'required',
+            'amount_collect' => 'required',
+            'commission'     => 'required',
+            'discount'       => 'required',
+            'rate_vat'       => 'required',
+            'status'         => 'required',
+            'note'           => 'required',
+            'file'           => 'mimes:pdf,jpg,jpeg,png'
+        ];
+        $validate_msg_ar = [
+            'invoice_number.required' => 'يجب كتابه رقم الفاتوره',
+            'invoice_number.min'      => 'يجب أن يكون رقم الفاتوره أكثر من 5 ارقام او احرف',
+            'invoice_number.unique'   => 'رقم الفاتوره مسجل مسبقا',
+            'invoice_date.required'   => 'يجب ادخال تاريخ الفاتوره',
+            'due_date.required'       => 'يجب ادخال تاريخ استحقاق الفاتوره',
+            'section_id.required'     => 'يجب اختيار القسم',
+            'product_id.required'     => 'يجب اختيار المنتج',
+            'amount_collect.required' => 'يجب كتابه مبلغ التحصيل',
+            'commission.required'     => 'يجب كتابه العموله',
+            'discount.required'       => 'يجب كتابه الخصم',
+            'rate_vat.required'       => 'يجب اختيار نسبه الضريبه',
+            'status.required'         => 'يجب اختيار حاله الفاتوره',
+            'note.required'           => 'يجب كتابه ملاحظات للفاتوره',
+            'file.mimes'              => 'يجب ان يكون الملف باحد الصيغ : PDF , JPG , JPEG , PNG'
+        ];
+        $data = $this->validate($request,$rules,$validate_msg_ar);
+
+        /**
+         * to add information in invoices Table
+         **/
+        $data['invoice_number'] = $request->invoice_number;
+        $data['invoice_date']   = $request->invoice_date;
+        $data['due_date']       = $request->due_date;
+        $data['section_id']     = $request->section_id;
+        $data['product_id']     = $request->product_id;
+        $data['amount_collect'] = $request->amount_collect;
+        $data['commission']     = $request->commission;
+        $data['discount']       = $request->discount;
+        $data['rate_vat']       = $request->rate_vat;
+        $data['value_vat']      = $request->value_vat;
+        $data['total']          = $request->total;
+
+        $data['status'] = $request->status;
+        if ($data['status'] === "غير مدفوعه"){
+            $data['value_status'] = "1";
+        }elseif ($data['status'] === "مدفوعه"){
+            $data['value_status'] = "2";
+        }elseif ($data['status'] === "مدفوعه جزئيا"){
+            $data['value_status'] = "3";
+        }elseif ($data['status'] === "مؤجله"){
+            $data['value_status'] = "4";
+        }
+
+        $data['note'] = $request->note;
+        Invoices::find($id)->update($data);
+
+        /**
+         * to add information in invoicesDetails Table
+         **/
+        $invoice_id             = $id;
+        $data['invoice_id']     = $invoice_id;
+        $data['invoice_number'] = $request->invoice_number;
+        $data['product']        = $request->product_id;
+        $data['section']        = $request->section_id;
+
+        $data['status'] = $request->status;
+        if ($data['status'] === "غير مدفوعه"){
+            $data['value_status'] = "1";
+        }elseif ($data['status'] === "مدفوعه"){
+            $data['value_status'] = "2";
+        }elseif ($data['status'] === "مدفوعه جزئيا"){
+            $data['value_status'] = "3";
+        }elseif ($data['status'] === "مؤجله"){
+            $data['value_status'] = "4";
+        }
+
+        $data['note'] = $request->note;
+        $data['user'] = auth()->user()->name;
+        InvoicesDetails::find($id)->update($data);
+
+        /**
+         * to add information in invoicesAttachments Table
+         **/
+        if ($request->hasFile('file')){
+            $invoice_id     = $id;
+            $file           = $request->file('file');
+            $file_name      = $file->getClientOriginalName();
+            $invoice_number = $request->invoice_number;
+            $user           = auth()->user()->name;
+
+            $attachment = new InvoicesAttachments();
+            $attachment->invoice_id     = $invoice_id;
+            $attachment->file_name      = $file_name;
+            $attachment->invoice_number = $invoice_number;
+            $attachment->user           = $user;
+            $attachment->save();
+
+            $file->move(public_path('Attachments/'.$invoice_number),$file_name);
+        }else{
+            $invoice_id = $id;
+            $data['invoice_id']     = $invoice_id;
+            $data['invoice_number'] = $request->invoice_number;
+            $data['user'] = auth()->user()->name;
+            InvoicesAttachments::find($id)->update($data);
+        }
+        session()->flash('success','تم تعديل الفاتوره بنجاح');
+        return redirect('invoices');
     }
 
     /**
@@ -201,9 +310,28 @@ class InvoicesController extends Controller
      * @param  \App\invoices  $invoices
      * @return \Illuminate\Http\Response
      */
-    public function destroy(invoices $invoices)
+    public function destroy(Request $request,$id)
     {
-        //
+
+        if ($id != null){
+            $del = Invoices::find($id);
+            $del->delete();
+        }elseif (\request()->has('restore') and \request()->has('id')){
+            Invoices::whereIn('id',\request('id'))->restore();
+        }elseif (\request()->has('forcedelete') and \request()->has('id')){
+            Invoices::whereIn('id',\request('id'))->forceDelete();
+        }elseif (\request()->has('delete') and \request()->has('id')){
+            Invoices::destroy(\request('id'));
+        }
+
+//        Invoices::find($id)->delete();
+//        Storage::deleteDirectory($request->invoice_number . '/' . $request->file_name);
+//        Storage::disk('public_path')->delete($request->invoice_number.'/'.$request->file_name);
+//        session()->flash('success','تم حذف الفاتوره بنجاح');
+//        return back();
+        echo $id;
+        echo "<br>";
+        return $request;
     }
 
     /**

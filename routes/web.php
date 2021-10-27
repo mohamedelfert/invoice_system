@@ -23,15 +23,21 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'],function (){
+
     Route::resource('invoices','InvoicesController');
     // this route to get products name for users by ajax when he chose section.
     Route::get('/section/{id}','InvoicesController@getProductsName');
+
     Route::get('/invoice_details/{id}','InvoicesDetailsController@index');
     Route::get('/viewFile/{invoice_number}/{file_name}','InvoicesDetailsController@openFile');
     Route::get('/download/{invoice_number}/{file_name}','InvoicesDetailsController@downloadFile');
     Route::post('delete_file','InvoicesDetailsController@destroy')->name('delete_file');
+
     Route::resource('sections','SectionController');
+
     Route::resource('products','ProductsController');
+
+    Route::resource('invoices_attachments','InvoicesAttachmentsController');
 });
 
 

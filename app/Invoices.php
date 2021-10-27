@@ -34,6 +34,10 @@ class Invoices extends Model
         return $this->hasOne(InvoicesDetails::class,'invoice_id','id');
     }
 
+    public function getAttachment(){
+        return $this->hasOne(InvoicesAttachments::class,'invoice_id','id');
+    }
+
     public function getSectionName(){
         return $this->hasOne(Sections::class,'id','section_id');
     }

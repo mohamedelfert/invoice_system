@@ -19,7 +19,7 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ اضافه فاتوره</span>
+                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ تعديل الفاتوره</span>
             </div>
         </div>
     </div>
@@ -52,23 +52,24 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('invoices.store') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ url('invoices/'.$invoice->id) }}" method="post" enctype="multipart/form-data">
+                                {{method_field('put')}}
                                 {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col">
                                         <label for="invoice_number" class="control-label">رقم الفاتورة</label>
-                                        <input type="text" class="form-control" value="{{old('invoice_number')}}" id="invoice_number" name="invoice_number" placeholder="أدخل رقم الفاتورة" required>
+                                        <input type="text" class="form-control" value="{{$invoice->invoice_number}}" id="invoice_number" name="invoice_number" placeholder="أدخل رقم الفاتورة" required>
                                     </div>
 
                                     <div class="col">
                                         <label for="invoice_date" class="control-label">تاريخ الفاتورة</label>
-                                        <input class="form-control fc-datepicker" id="invoice_date" name="invoice_date" value="{{old('invoice_date')}}"
+                                        <input class="form-control fc-datepicker" id="invoice_date" name="invoice_date" value="{{$invoice->invoice_date}}"
                                                placeholder="YYYY-MM-DD" type="date"  required>
                                     </div>
 
                                     <div class="col">
                                         <label for="due_date" class="control-label">تاريخ الاستحقاق</label>
-                                        <input class="form-control fc-datepicker" id="due_date" name="due_date" value="{{old('due_date')}}"
+                                        <input class="form-control fc-datepicker" id="due_date" name="due_date" value="{{$invoice->due_date}}"
                                                placeholder="YYYY-MM-DD" type="date" required>
                                     </div>
                                 </div>
@@ -81,8 +82,9 @@
                                         <select name="section_id" id="section_id" class="form-control SlectBox" onclick="console.log($(this).val())"
                                                 onchange="console.log('Change Is Firing')">
                                             <option value="" selected disabled>حدد القسم</option>
+{{--                                            <option value="{{$invoice->getSectionName->id }}">{{$invoice->getSectionName->section_name}}</option>--}}
                                             @foreach ($sections as $section)
-                                                <option value="{{ $section->id }}"> {{ $section->section_name }}</option>
+                                                <option value="{{ $section->id }}" {{($invoice->section_id === $section->id) ? 'selected':''}}> {{ $section->section_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -90,13 +92,14 @@
                                     <div class="col">
                                         <label for="product_id" class="control-label">المنتج</label>
                                         <select id="product_id" name="product_id" class="form-control">
+                                            <option value="{{ $invoice->product_id }}"> {{ $invoice->getProductName->product_name }}</option>
                                         </select>
                                     </div>
 
                                     <div class="col">
                                         <label for="amount_collect" class="control-label">مبلغ التحصيل</label>
                                         <input type="text" class="form-control" id="amount_collect" name="amount_collect" placeholder="يرجي ادخال مبلغ التحصيل "
-                                               value="{{old('amount_collect')}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                               value="{{$invoice->amount_collect}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     </div>
                                 </div>
 
@@ -106,23 +109,23 @@
                                     <div class="col">
                                         <label for="commission" class="control-label">مبلغ العمولة</label>
                                         <input type="text" class="form-control" id="commission" name="commission" placeholder="يرجي ادخال مبلغ العمولة "
-                                               value="{{old('commission')}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+                                               value="{{$invoice->commission}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
                                     </div>
 
                                     <div class="col">
                                         <label for="discount" class="control-label">الخصم</label>
                                         <input type="text" class="form-control" id="discount" name="discount" placeholder="يرجي ادخال مبلغ الخصم "
-                                               value="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+                                               value="{{$invoice->discount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
                                     </div>
 
                                     <div class="col">
                                         <label for="rate_vat" class="control-label">نسبة ضريبة القيمة المضافة</label>
                                         <select name="rate_vat" id="rate_vat" class="form-control" onchange="myFunction()">
                                             <option value="" selected disabled>حدد نسبة الضريبة</option>
-                                            <option value="0.05">5%</option>
-                                            <option value="0.10">10%</option>
-                                            <option value="0.13">13%</option>
-                                            <option value="0.14">14%</option>
+                                            <option value="0.05" {{($invoice->rate_vat === '0.05') ? 'selected':''}}>5%</option>
+                                            <option value="0.10" {{($invoice->rate_vat === '0.10') ? 'selected':''}}>10%</option>
+                                            <option value="0.13" {{($invoice->rate_vat === '0.13') ? 'selected':''}}>13%</option>
+                                            <option value="0.14" {{($invoice->rate_vat === '0.14') ? 'selected':''}}>14%</option>
                                         </select>
                                     </div>
                                 </div>
@@ -133,22 +136,22 @@
                                     <div class="col">
                                         <label for="status" class="control-label">حاله الفاتوره</label>
                                         <select name="status" id="status" class="form-control">
-                                            <option value="غير مدفوعه" selected>غير مدفوعه</option>
-                                            <option value="مدفوعه">مدفوعه</option>
-                                            <option value="مدفوعه جزئيا">مدفوعه جزئيا</option>
-                                            <option value="مؤجله">مؤجله</option>
+                                            <option value="غير مدفوعه" {{($invoice->status === 'غير مدفوعه') ? 'selected':''}}>غير مدفوعه</option>
+                                            <option value="مدفوعه" {{($invoice->status === 'مدفوعه') ? 'selected':''}}>مدفوعه</option>
+                                            <option value="مدفوعه جزئيا" {{($invoice->status === 'مدفوعه جزئيا') ? 'selected':''}}>مدفوعه جزئيا</option>
+                                            <option value="مؤجله" {{($invoice->status === 'مؤجله') ? 'selected':''}}>مؤجله</option>
 
                                         </select>
                                     </div>
 
                                     <div class="col">
                                         <label for="value_vat" class="control-label">قيمة ضريبة القيمة المضافة</label>
-                                        <input type="text" class="form-control" id="value_vat" name="value_vat" readonly>
+                                        <input type="text" class="form-control" id="value_vat" name="value_vat" value="{{$invoice->value_vat}}" readonly>
                                     </div>
 
                                     <div class="col">
                                         <label for="total" class="control-label">الاجمالي شامل الضريبة</label>
-                                        <input type="text" class="form-control" id="total" name="total" readonly>
+                                        <input type="text" class="form-control" id="total" name="total" value="{{$invoice->total}}" readonly>
                                     </div>
                                 </div>
 
@@ -157,7 +160,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="note">ملاحظات</label>
-                                        <textarea class="form-control" id="note" name="note" rows="3">{{old('note')}}</textarea>
+                                        <textarea class="form-control" id="note" name="note" rows="3">{{$invoice->note}}</textarea>
                                     </div>
                                 </div>
 
@@ -165,7 +168,7 @@
 
                                 <div class="col-sm-12 col-md-12">
                                     <h5 class="card-title">المرفقات</h5>
-                                    <input type="file" name="file" id="file" class="dropify" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" required/>
+                                    <input type="file" name="file" id="file" class="dropify" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70"/>
                                     <p class="text-danger" style="margin-top: 5px">* صيغة المرفق : ( PDF, JPEG , JPG , PNG ) </p>
                                 </div>
 
@@ -253,7 +256,6 @@
                 document.getElementById("value_vat").value = sum_commision;
                 document.getElementById("total").value = sum_total;
             }
-
         };
     </script>
     {{-- End This To Get And Calculate commision after discount , value vat and total --}}

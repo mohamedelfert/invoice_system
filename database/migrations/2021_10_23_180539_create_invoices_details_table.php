@@ -24,6 +24,7 @@ class CreateInvoicesDetailsTable extends Migration
             $table->integer('value_status');
             $table->text('note')->nullable();
             $table->string('user');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

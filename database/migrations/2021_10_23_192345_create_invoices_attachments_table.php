@@ -20,6 +20,7 @@ class CreateInvoicesAttachmentsTable extends Migration
             $table->string('file_name');
             $table->string('invoice_number');
             $table->string('user');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

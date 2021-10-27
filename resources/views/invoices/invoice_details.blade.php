@@ -197,6 +197,36 @@
                                                 </div>
 
                                                 <div class="tab-pane" id="tab6">
+
+                                                    <!-- Add New Attachment -->
+                                                    <div class="col-md-12 col-xl-12 col-xs-12 col-sm-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="main-content-label mg-b-5">
+                                                                    اضافه مرفق جديد
+                                                                </div>
+                                                                <p class="text-danger" style="margin-top: 5px">* صيغة المرفق : ( PDF, JPEG , JPG , PNG ) </p>
+                                                                <form action="{{url('invoices_attachments')}}" method="post" enctype="multipart/form-data">
+                                                                    {{ csrf_field() }}
+                                                                    <div class="row row-sm">
+                                                                        <div class="col-md-12">
+                                                                            <div class="custom-file">
+                                                                                <input class="custom-file-input" name="file" id="file" type="file" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" required>
+                                                                                <label class="custom-file-label" for="customFile">اختيار الملف</label>
+                                                                                <input type="hidden" name="invoice_number" id="invoice_number" value="{{$invoice->invoice_number}}">
+                                                                                <input type="hidden" name="invoice_id" id="invoice_id" value="{{$invoice->id}}">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="card-footer">
+                                                                        <button type="submit" class="btn btn-primary">تاكيد</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Add New Attachment -->
+
                                                     <div class="card-body">
                                                         <div class="table-responsive">
                                                             <table class="table text-md-nowrap" id="example1">

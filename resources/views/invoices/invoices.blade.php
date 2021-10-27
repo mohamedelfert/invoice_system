@@ -4,12 +4,14 @@
 @endsection
 @section('css')
     <!-- Internal Data table css -->
-    <link href="{{URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet" />
-    <link href="{{URL::asset('assets/plugins/datatable/css/buttons.bootstrap4.min.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('assets/plugins/datatable/css/responsive.bootstrap4.min.css')}}" rel="stylesheet" />
-    <link href="{{URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
+    <link href="{{ URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" />
+    <link href="{{ URL::asset('assets/plugins/datatable/css/buttons.bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" />
+    <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <!--Internal   Notify -->
+    <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
 @endsection
 @section('page-header')
     <!-- breadcrumb -->
@@ -50,8 +52,6 @@
                     <div class="card">
                         <div class="card-header pb-0">
                             <a class="btn btn-success" href="{{url('invoices/create')}}"><i class="mdi mdi-plus"></i> اضافه فاتوره </a>
-                            <a class="btn btn-secondary"><i class="mdi mdi-archive"></i> نقل الي الارشيف </a>
-                            <a class="btn btn-danger"><i class="mdi mdi-delete"></i> حذف </a>
                             <a class="btn btn-primary"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
                         </div>
                         <div class="card-body">
@@ -59,18 +59,19 @@
                                 <table class="table text-md-nowrap" id="example1">
                                     <thead>
                                         <tr>
-                                            <th class="wd-5p border-bottom-0">#</th>
-                                            <th class="wd-10p border-bottom-0">رقم الفاتوره</th>
-                                            <th class="wd-10p border-bottom-0">تاريخ الفاتوره</th>
-                                            <th class="wd-10p border-bottom-0">تاريخ الاستحقاق</th>
-                                            <th class="wd-10p border-bottom-0">المنتج</th>
-                                            <th class="wd-10p border-bottom-0">القسم</th>
-                                            <th class="wd-5p border-bottom-0">الخصم</th>
-                                            <th class="wd-5p border-bottom-0">نسبه الضريبه</th>
-                                            <th class="wd-5p border-bottom-0">قيمه الضريبه</th>
-                                            <th class="wd-5p border-bottom-0">الاجمالي</th>
-                                            <th class="wd-10p border-bottom-0">الحاله</th>
-                                            <th class="wd-25p border-bottom-0">ملاحظات</th>
+                                            <th class="border-bottom-0">#</th>
+                                            <th class="border-bottom-0">رقم الفاتوره</th>
+                                            <th class="border-bottom-0">تاريخ الفاتوره</th>
+                                            <th class="border-bottom-0">تاريخ الاستحقاق</th>
+                                            <th class="border-bottom-0">المنتج</th>
+                                            <th class="border-bottom-0">القسم</th>
+                                            <th class="border-bottom-0">الخصم</th>
+                                            <th class="border-bottom-0">نسبه الضريبه</th>
+                                            <th class="border-bottom-0">قيمه الضريبه</th>
+                                            <th class="border-bottom-0">الاجمالي</th>
+                                            <th class="border-bottom-0">الحاله</th>
+                                            <th class="border-bottom-0">ملاحظات</th>
+                                            <th class="wd-10p border-bottom-0">العمليات</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -101,6 +102,34 @@
                                                 @endif
                                             </td>
                                             <td>{{$invoice->note}}</td>
+                                            <td>
+{{--                                                <a href="{{url('invoices/' . $invoice->id . '/edit')}}" class="btn btn-primary btn-sm">تعديل</a>--}}
+{{--                                                {!! Form::open(['url'=>'invoices/'.$invoice->id,'method'=>'delete','style'=>'display:inline']) !!}--}}
+{{--                                                {!! Form::hidden('invoice_number',$invoice->invoice_number) !!}--}}
+{{--                                                {!! Form::hidden('file_name',$invoice->getAttachment->file_name) !!}--}}
+{{--                                                {!! Form::submit('حذف',['class'=>'btn btn-danger btn-sm']) !!}--}}
+{{--                                                {!! Form::close() !!}--}}
+
+                                                <div class="dropdown">
+                                                    <button aria-expanded="false" aria-haspopup="true" class="btn ripple btn-primary btn-sm"
+                                                            data-toggle="dropdown" id="dropdownMenuButton" type="button"> العمليات <i class="fas fa-caret-down ml-1"></i>
+                                                    </button>
+                                                    <div  class="dropdown-menu tx-13">
+                                                        <a class="dropdown-item text-info" href="{{url('invoices/' . $invoice->id . '/edit')}}"> تعديل </a>
+
+                                                        {!! Form::open(['url'=>'invoices/'.$invoice->id,'method'=>'delete','style'=>'display:inline']) !!}
+                                                        {!! Form::hidden('invoice_number',$invoice->invoice_number) !!}
+                                                        {!! Form::hidden('file_name',$invoice->getAttachment->file_name) !!}
+                                                        {!! Form::submit('حذف مؤقت',['class'=>'dropdown-item text-danger']) !!}
+                                                        {!! Form::submit('حذف نهائي',['class'=>'dropdown-item text-gary']) !!}
+                                                        {!! Form::close() !!}
+
+                                                        <a class="dropdown-item text-warning" href=""> تغيير الحاله </a>
+                                                        <a class="dropdown-item text-primary" href=""> ارشفه </a>
+                                                        <a class="dropdown-item text-success" href=""> طباعه </a>
+                                                    </div>
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -118,22 +147,25 @@
 @endsection
 @section('js')
     <!-- Internal Data tables -->
-    <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/jszip.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/pdfmake.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/vfs_fonts.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/buttons.html5.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/buttons.print.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/buttons.colVis.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/datatable/js/responsive.bootstrap4.min.js')}}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/jszip.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/pdfmake.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/vfs_fonts.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.print.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.colVis.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.bootstrap4.min.js') }}"></script>
     <!--Internal  Datatable js -->
-    <script src="{{URL::asset('assets/js/table-data.js')}}"></script>
+    <script src="{{ URL::asset('assets/js/table-data.js') }}"></script>
+    <!--Internal  Notify js -->
+    <script src="{{ URL::asset('assets/plugins/notify/js/notifIt.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/notify/js/notifit-custom.js') }}"></script>
 @endsection
