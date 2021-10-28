@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth'],function (){
     Route::resource('invoices','InvoicesController');
     // this route to get products name for users by ajax when he chose section.
     Route::get('/section/{id}','InvoicesController@getProductsName');
+    Route::get('/status_show/{id}', 'InvoicesController@payment_status')->name('status_show');
+    Route::post('/status_update/{id}', 'InvoicesController@update_status')->name('status_update');
 
     Route::get('/invoice_details/{id}','InvoicesDetailsController@index');
     Route::get('/viewFile/{invoice_number}/{file_name}','InvoicesDetailsController@openFile');

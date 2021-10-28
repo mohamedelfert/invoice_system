@@ -15,19 +15,20 @@ class InvoicesDetails extends Model
         'id',
         'invoice_id',
         'invoice_number',
-        'product',
-        'section',
+        'product_id',
+        'section_id',
         'status',
         'value_status',
+        'payment_date',
         'note',
         'user'
     ];
 
     public function getSectionName(){
-        return $this->hasOne(Sections::class,'id','section');
+        return $this->hasOne(Sections::class,'id','section_id');
     }
 
     public function getProductName(){
-        return $this->hasOne(Products::class,'id','product');
+        return $this->hasOne(Products::class,'id','product_id');
     }
 }

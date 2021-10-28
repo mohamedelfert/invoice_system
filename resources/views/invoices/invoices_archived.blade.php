@@ -18,7 +18,7 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ قائمه الفواتير</span>
+                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ قائمه الفواتير المؤرشفه</span>
             </div>
         </div>
     </div>
@@ -46,11 +46,11 @@
         </div>
     @endif
 
-    @if (session()->has('archive_invoice'))
+    @if (session()->has('restore'))
         <script>
             window.onload = function() {
                 notif({
-                    msg: "تم ارشفه الفاتوره بنجاح",
+                    msg: "تم استرجاع الفاتوره بنجاح",
                     type: "success"
                 })
             }
@@ -73,8 +73,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <a class="btn btn-success" href="{{url('invoices/create')}}"><i class="mdi mdi-plus"></i> اضافه فاتوره </a>
-                            <a class="btn btn-primary"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
+                            <a class="btn btn-primary" href="../invoices"><i class="mdi mdi-keyboard-return"></i> رجوع للفواتير </a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -98,7 +97,7 @@
                                     </thead>
                                     <tbody>
                                     <?php $i = 1; ?>
-                                    @foreach($all_invoices as $invoice)
+                                    @foreach($archived_invoices as $invoice)
                                         <tr>
                                             <td>{{$i++}}</td>
                                             <td>
@@ -125,27 +124,17 @@
                                             </td>
                                             <td>{{$invoice->note}}</td>
                                             <td>
-{{--                                                <a href="{{url('invoices/' . $invoice->id . '/edit')}}" class="btn btn-primary btn-sm">تعديل</a>--}}
-{{--                                                {!! Form::open(['url'=>'invoices/'.$invoice->id,'method'=>'delete','style'=>'display:inline']) !!}--}}
-{{--                                                {!! Form::hidden('invoice_number',$invoice->invoice_number) !!}--}}
-{{--                                                {!! Form::hidden('file_name',$invoice->getAttachment->file_name) !!}--}}
-{{--                                                {!! Form::submit('حذف',['class'=>'btn btn-danger btn-sm']) !!}--}}
-{{--                                                {!! Form::close() !!}--}}
-
                                                 <div class="dropdown">
                                                     <button aria-expanded="false" aria-haspopup="true" class="btn ripple btn-primary btn-sm"
                                                             data-toggle="dropdown" id="dropdownMenuButton" type="button"> العمليات <i class="fas fa-caret-down ml-1"></i>
                                                     </button>
                                                     <div  class="dropdown-menu tx-13">
-                                                        <a class="dropdown-item text-info" href="{{url('invoices/' . $invoice->id . '/edit')}}"> تعديل </a>
                                                         <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#archive" title="ارشفه">ارشفه
+                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#restore" title="ارشفه">استرجاع
                                                         </a>
                                                         <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
                                                            data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
                                                         </a>
-                                                        <a class="dropdown-item text-warning" href="{{ URL::route('status_show', [$invoice->id]) }}"> تغيير الحاله </a>
-                                                        <a class="dropdown-item text-success" href=""> طباعه </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -160,31 +149,30 @@
             </div>
             <!-- row closed -->
 
-            <!-- soft delete or archive invoice -->
-            <div class="modal fade" id="archive">
+            <!-- restore invoice -->
+            <div class="modal fade" id="restore">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content modal-content-demo">
                         <div class="modal-header">
-                            <h6 class="modal-title">ارشفه الفاتوره</h6>
+                            <h6 class="modal-title">استرجاع الفاتوره</h6>
                             <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                         </div>
-                        {{--                        <form action="invoices/destroy" method="post">--}}
                         <form action="{{ route('invoices.destroy','test') }}" method="post">
                             {{ method_field('delete') }}
                             {{ csrf_field() }}
                             <div class="modal-body">
-                                <p>هل انت متاكد من وضعها بالارشيف ؟</p><br>
+                                <p>هل انت متاكد من استرجاع الفاتوره ؟</p><br>
                                 <input type="hidden" name="id" id="id" value="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                                <button type="submit" name="archive" class="btn btn-danger">تاكيد</button>
+                                <button type="submit" name="restore" class="btn btn-danger">تاكيد</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <!-- soft delete or archive invoice -->
+            <!-- restore invoice -->
 
             <!-- force delete invoice -->
             <div class="modal fade" id="force_delete">
@@ -243,16 +231,16 @@
     <!-- Internal Modal js-->
     <script src="{{URL::asset('assets/js/modal.js')}}"></script>
 
-    <!-- This For Archive Form -->
+    <!-- This For Restore Form -->
     <script>
-        $('#archive').on('show.bs.modal', function(event) {
+        $('#restore').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')
             var modal = $(this)
             modal.find('.modal-body #id').val(id);
         })
     </script>
-    <!-- This For Archive Form -->
+    <!-- This For Restore Form -->
 
     <!-- This For Delete Form -->
     <script>

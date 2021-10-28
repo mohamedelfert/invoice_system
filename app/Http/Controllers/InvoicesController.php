@@ -162,9 +162,11 @@ class InvoicesController extends Controller
      * @param  \App\invoices  $invoices
      * @return \Illuminate\Http\Response
      */
-    public function show(invoices $invoices)
+    public function show()
     {
-        //
+        $title = 'الفواتير المؤرشفه';
+        $archived_invoices = Invoices::where('deleted_at',null)->get();
+        return view('invoices.invoices_archived',compact('title','archived_invoices'));
     }
 
     /**
@@ -322,7 +324,15 @@ class InvoicesController extends Controller
             InvoicesAttachments::where('invoice_id', $id)->delete();
             session()->flash('archive_invoice');
 
-        }elseif ($request->has('force_delete') and $request->has('id')){
+        }elseif ($request->has('restore') and $request->has('id')){
+
+            $invoices = Invoices::where('id', $id)->first();
+            $invoices->restore();
+            InvoicesDetails::where('invoice_id', $id)->restore();
+            InvoicesAttachments::where('invoice_id', $id)->restore();
+            session()->flash('restore');
+
+        } elseif ($request->has('force_delete') and $request->has('id')){
 
             $invoices = Invoices::where('id', $id)->first();
             $attachment = InvoicesAttachments::where('invoice_id',$id)->first();
@@ -344,5 +354,82 @@ class InvoicesController extends Controller
     public function getProductsName($id){
         $productName = DB::table('products')->where('section_id',$id)->pluck('product_name','id');
         return json_encode($productName);
+    }
+
+    /**
+     * This Function to return view show invoice payment
+     * */
+    public function payment_status($id){
+        $title = 'حاله دفع الفاتوره';
+        $invoice = Invoices::find($id);
+        $sections = Sections::all();
+        return view('invoices.change_payment',compact('title','invoice','sections'));
+    }
+
+    /**
+     * This Function to return view show invoice payment
+     * */
+    public function update_status(Request $request,$id){
+        $rules = [
+            'invoice_number' => 'required',
+            'section_id'     => 'required',
+            'product_id'     => 'required',
+            'status'         => 'required',
+            'note'           => 'required',
+            'payment_date'   => 'required'
+        ];
+        $validate_msg_ar = [
+            'invoice_number.required' => 'يجب كتابه رقم الفاتوره',
+            'section_id.required'     => 'يجب اختيار القسم',
+            'product_id.required'     => 'يجب اختيار المنتج',
+            'status.required'         => 'يجب اختيار حاله الفاتوره',
+            'note.required'           => 'يجب كتابه ملاحظات للفاتوره',
+            'payment_date.required'   => 'يجب اختيار تاريخ الدفع'
+        ];
+        $data = $this->validate($request,$rules,$validate_msg_ar);
+
+        /**
+         * to add information in invoices Table
+         **/
+        $data['status'] = $request->status;
+        if ($data['status'] === "غير مدفوعه"){
+            $data['value_status'] = "1";
+        }elseif ($data['status'] === "مدفوعه"){
+            $data['value_status'] = "2";
+        }elseif ($data['status'] === "مدفوعه جزئيا"){
+            $data['value_status'] = "3";
+        }elseif ($data['status'] === "مؤجله"){
+            $data['value_status'] = "4";
+        }
+
+        Invoices::find($id)->update($data);
+
+        /**
+         * to add information in invoicesDetails Table
+         **/
+        $invoice_id             = $id;
+        $data['invoice_id']     = $invoice_id;
+        $data['invoice_number'] = $request->invoice_number;
+        $data['product_id']     = $request->product_id;
+        $data['section_id']     = $request->section_id;
+
+        $data['status'] = $request->status;
+        if ($data['status'] === "غير مدفوعه"){
+            $data['value_status'] = "1";
+        }elseif ($data['status'] === "مدفوعه"){
+            $data['value_status'] = "2";
+        }elseif ($data['status'] === "مدفوعه جزئيا"){
+            $data['value_status'] = "3";
+        }elseif ($data['status'] === "مؤجله"){
+            $data['value_status'] = "4";
+        }
+
+        $data['payment_date'] = $request->payment_date;
+        $data['note'] = $request->note;
+        $data['user'] = auth()->user()->name;
+        InvoicesDetails::create($data);
+
+        session()->flash('success','تم تغيير حاله الدفع بنجاح');
+        return redirect('invoices');
     }
 }

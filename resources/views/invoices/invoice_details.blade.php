@@ -185,7 +185,7 @@
                                                                                 <span class="badge badge-pill badge-info">{{$details->status}}</span>
                                                                             @endif
                                                                         </td>
-                                                                        <td>{{$invoice->payment_date}}</td>
+                                                                        <td>{{$details->payment_date}}</td>
                                                                         <td>{{$details->created_at}}</td>
                                                                         <td>{{$details->user}}</td>
                                                                     </tr>
@@ -279,7 +279,7 @@
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content modal-content-demo">
                             <div class="modal-header">
-                                <h6 class="modal-title">حذف المنتج</h6>
+                                <h6 class="modal-title">حذف المرفق</h6>
                                 <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                             </div>
                             <form action="{{route('delete_file')}}" method="post">
