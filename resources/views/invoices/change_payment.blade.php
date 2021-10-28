@@ -148,7 +148,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="note">ملاحظات</label>
-                                        <textarea class="form-control" id="note" name="note" rows="3" readonly>{{$invoice->note}}</textarea>
+                                        <textarea class="form-control" id="note" name="note" rows="3">{{$invoice->note}}</textarea>
                                     </div>
                                 </div>
 

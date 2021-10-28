@@ -128,6 +128,7 @@ class InvoicesController extends Controller
             $data['value_status'] = "4";
         }
 
+        $data['payment_date'] = date('Y-m-d');
         $data['note'] = $request->note;
         $data['user'] = auth()->user()->name;
         InvoicesDetails::create($data);
@@ -402,6 +403,7 @@ class InvoicesController extends Controller
             $data['value_status'] = "4";
         }
 
+        $data['note'] = $request->note;
         Invoices::find($id)->update($data);
 
         /**
@@ -431,5 +433,41 @@ class InvoicesController extends Controller
 
         session()->flash('success','تم تغيير حاله الدفع بنجاح');
         return redirect('invoices');
+    }
+
+    /**
+     * this function to show paid invoices
+     **/
+    public function show_paid_invoices(){
+        $title = 'قائمه الفواتير المدفوعه';
+        $paid_invoices = Invoices::where('value_status',2)->get();
+        return view('invoices.invoices_paid',compact('title','paid_invoices'));
+    }
+
+    /**
+     * this function to show unpaid invoices
+     **/
+    public function show_unpaid_invoices(){
+        $title = 'قائمه الفواتير الغير مدفوعه';
+        $unpaid_invoices = Invoices::where('value_status',1)->get();
+        return view('invoices.invoices_unpaid',compact('title','unpaid_invoices'));
+    }
+
+    /**
+     * this function to show part paid invoices
+     **/
+    public function show_part_paid_invoices(){
+        $title = 'قائمه الفواتير الدفوعه جزئيا';
+        $part_paid_invoices = Invoices::where('value_status',3)->get();
+        return view('invoices.invoices_part_paid',compact('title','part_paid_invoices'));
+    }
+
+    /**
+     * this function to show post paid invoices
+     **/
+    public function show_post_paid_invoices(){
+        $title = 'قائمه الفواتير المؤجله';
+        $post_paid_invoices = Invoices::where('value_status',4)->get();
+        return view('invoices.invoices_post_paid',compact('title','post_paid_invoices'));
     }
 }
