@@ -165,9 +165,7 @@ class InvoicesController extends Controller
      */
     public function show()
     {
-        $title = 'الفواتير المؤرشفه';
-        $archived_invoices = Invoices::where('deleted_at',null)->get();
-        return view('invoices.invoices_archived',compact('title','archived_invoices'));
+        //
     }
 
     /**
@@ -194,7 +192,6 @@ class InvoicesController extends Controller
     public function update(Request $request,$id)
     {
         $rules = [
-            'invoice_number' => 'required|min:5|unique:Invoices,invoice_number,'.$id,
             'invoice_date'   => 'required',
             'due_date'       => 'required',
             'section_id'     => 'required',
@@ -204,13 +201,9 @@ class InvoicesController extends Controller
             'discount'       => 'required',
             'rate_vat'       => 'required',
             'status'         => 'required',
-            'note'           => 'required',
-            'file'           => 'mimes:pdf,jpg,jpeg,png'
+            'note'           => 'required'
         ];
         $validate_msg_ar = [
-            'invoice_number.required' => 'يجب كتابه رقم الفاتوره',
-            'invoice_number.min'      => 'يجب أن يكون رقم الفاتوره أكثر من 5 ارقام او احرف',
-            'invoice_number.unique'   => 'رقم الفاتوره مسجل مسبقا',
             'invoice_date.required'   => 'يجب ادخال تاريخ الفاتوره',
             'due_date.required'       => 'يجب ادخال تاريخ استحقاق الفاتوره',
             'section_id.required'     => 'يجب اختيار القسم',
@@ -220,15 +213,13 @@ class InvoicesController extends Controller
             'discount.required'       => 'يجب كتابه الخصم',
             'rate_vat.required'       => 'يجب اختيار نسبه الضريبه',
             'status.required'         => 'يجب اختيار حاله الفاتوره',
-            'note.required'           => 'يجب كتابه ملاحظات للفاتوره',
-            'file.mimes'              => 'يجب ان يكون الملف باحد الصيغ : PDF , JPG , JPEG , PNG'
+            'note.required'           => 'يجب كتابه ملاحظات للفاتوره'
         ];
         $data = $this->validate($request,$rules,$validate_msg_ar);
 
         /**
          * to add information in invoices Table
          **/
-        $data['invoice_number'] = $request->invoice_number;
         $data['invoice_date']   = $request->invoice_date;
         $data['due_date']       = $request->due_date;
         $data['section_id']     = $request->section_id;
@@ -259,7 +250,6 @@ class InvoicesController extends Controller
          **/
         $invoice_id             = $id;
         $data['invoice_id']     = $invoice_id;
-        $data['invoice_number'] = $request->invoice_number;
         $data['product']        = $request->product_id;
         $data['section']        = $request->section_id;
 
@@ -276,11 +266,12 @@ class InvoicesController extends Controller
 
         $data['note'] = $request->note;
         $data['user'] = auth()->user()->name;
-        InvoicesDetails::find($id)->update($data);
+        $invoice_details = InvoicesDetails::where('invoice_id',$id)->first();
+        $invoice_details->update($data);
 
         /**
          * to add information in invoicesAttachments Table
-         **/
+
         if ($request->hasFile('file')){
             $invoice_id     = $id;
             $file           = $request->file('file');
@@ -303,6 +294,8 @@ class InvoicesController extends Controller
             $data['user'] = auth()->user()->name;
             InvoicesAttachments::find($id)->update($data);
         }
+        **/
+
         session()->flash('success','تم تعديل الفاتوره بنجاح');
         return redirect('invoices');
     }
@@ -325,15 +318,7 @@ class InvoicesController extends Controller
             InvoicesAttachments::where('invoice_id', $id)->delete();
             session()->flash('archive_invoice');
 
-        }elseif ($request->has('restore') and $request->has('id')){
-
-            $invoices = Invoices::where('id', $id)->first();
-            $invoices->restore();
-            InvoicesDetails::where('invoice_id', $id)->restore();
-            InvoicesAttachments::where('invoice_id', $id)->restore();
-            session()->flash('restore');
-
-        } elseif ($request->has('force_delete') and $request->has('id')){
+        }elseif ($request->has('force_delete') and $request->has('id')){
 
             $invoices = Invoices::where('id', $id)->first();
             $attachment = InvoicesAttachments::where('invoice_id',$id)->first();

@@ -35,6 +35,8 @@ Route::group(['middleware' => 'auth'],function (){
     Route::get('invoices_part_paid', 'InvoicesController@show_part_paid_invoices');
     Route::get('invoices_post_paid', 'InvoicesController@show_post_paid_invoices');
 
+    Route::resource('invoices_archive','InvoicesArchiveController');
+
     Route::get('/invoice_details/{id}','InvoicesDetailsController@index');
     Route::get('/viewFile/{invoice_number}/{file_name}','InvoicesDetailsController@openFile');
     Route::get('/download/{invoice_number}/{file_name}','InvoicesDetailsController@downloadFile');

@@ -62,7 +62,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="invoice_number" class="control-label">رقم الفاتورة</label>
-                                        <input type="text" class="form-control" value="{{$invoice->invoice_number}}" id="invoice_number" name="invoice_number" placeholder="أدخل رقم الفاتورة" required>
+                                        <input type="text" class="form-control" value="{{$invoice->invoice_number}}" id="invoice_number" name="invoice_number" readonly required>
                                     </div>
 
                                     <div class="col">
@@ -166,14 +166,6 @@
                                         <label for="note">ملاحظات</label>
                                         <textarea class="form-control" id="note" name="note" rows="3">{{$invoice->note}}</textarea>
                                     </div>
-                                </div>
-
-                                <br>
-
-                                <div class="col-sm-12 col-md-12">
-                                    <h5 class="card-title">المرفقات</h5>
-                                    <input type="file" name="file" id="file" class="dropify" accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70"/>
-                                    <p class="text-danger" style="margin-top: 5px">* صيغة المرفق : ( PDF, JPEG , JPG , PNG ) </p>
                                 </div>
 
                                 <hr>

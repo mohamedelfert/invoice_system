@@ -57,6 +57,17 @@
         </script>
     @endif
 
+    @if (session()->has('restore'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "تم استرجاع الفاتوره بنجاح",
+                    type: "success"
+                })
+            }
+        </script>
+    @endif
+
     @if (session()->has('delete_invoice'))
         <script>
             window.onload = function() {

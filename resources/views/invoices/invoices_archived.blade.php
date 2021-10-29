@@ -100,9 +100,7 @@
                                     @foreach($archived_invoices as $invoice)
                                         <tr>
                                             <td>{{$i++}}</td>
-                                            <td>
-                                                <a href="{{url('invoice_details/' . $invoice->id)}}">{{$invoice->invoice_number}}</a>
-                                            </td>
+                                            <td>{{$invoice->invoice_number}}</td>
                                             <td>{{$invoice->invoice_date}}</td>
                                             <td>{{$invoice->due_date}}</td>
                                             <td>{{$invoice->getProductName->product_name}}</td>
@@ -133,7 +131,8 @@
                                                            data-id="{{ $invoice->id }}" data-toggle="modal" href="#restore" title="ارشفه">استرجاع
                                                         </a>
                                                         <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
+                                                           data-id="{{ $invoice->id }}" data-invoice_number="{{ $invoice->invoice_number }}"
+                                                           data-toggle="modal" href="#force_delete" title="حذف">حذف
                                                         </a>
                                                     </div>
                                                 </div>
@@ -157,8 +156,8 @@
                             <h6 class="modal-title">استرجاع الفاتوره</h6>
                             <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                         </div>
-                        <form action="{{ route('invoices.destroy','test') }}" method="post">
-                            {{ method_field('delete') }}
+                        <form action="{{ route('invoices_archive.update','test') }}" method="post">
+                            {{ method_field('patch') }}
                             {{ csrf_field() }}
                             <div class="modal-body">
                                 <p>هل انت متاكد من استرجاع الفاتوره ؟</p><br>
@@ -183,12 +182,13 @@
                             <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                         </div>
 {{--                        <form action="invoices/destroy" method="post">--}}
-                        <form action="{{ route('invoices.destroy','test') }}" method="post">
+                        <form action="{{ route('invoices_archive.destroy','test') }}" method="post">
                             {{ method_field('delete') }}
                             {{ csrf_field() }}
                             <div class="modal-body">
                                 <p>هل انت متاكد من عملية الحذف ؟</p><br>
                                 <input type="hidden" name="id" id="id" value="">
+                                <input type="hidden" name="invoice_number" id="invoice_number" value="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
@@ -247,8 +247,10 @@
         $('#force_delete').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')
+            var invoice_number = button.data('invoice_number')
             var modal = $(this)
             modal.find('.modal-body #id').val(id);
+            modal.find('.modal-body #invoice_number').val(invoice_number);
         })
     </script>
     <!-- This For Delete Form -->
