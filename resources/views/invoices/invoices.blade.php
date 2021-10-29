@@ -156,7 +156,7 @@
                                                            data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
                                                         </a>
                                                         <a class="dropdown-item text-warning" href="{{ URL::route('status_show', [$invoice->id]) }}"> تغيير الحاله </a>
-                                                        <a class="dropdown-item text-success" href=""> طباعه </a>
+                                                        <a class="dropdown-item text-success" href="print_invoice/{{ $invoice->id }}"> طباعه </a>
                                                     </div>
                                                 </div>
                                             </td>

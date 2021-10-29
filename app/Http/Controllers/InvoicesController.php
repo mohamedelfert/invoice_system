@@ -455,4 +455,13 @@ class InvoicesController extends Controller
         $post_paid_invoices = Invoices::where('value_status',4)->get();
         return view('invoices.invoices_post_paid',compact('title','post_paid_invoices'));
     }
+
+    /**
+     * this function to show print invoice view
+     **/
+    public function print_invoice($id){
+        $title = 'معاينه الفاتوره للطباعه';
+        $invoice_show = Invoices::find($id);
+        return view('invoices.show_print_invoice',compact('title','invoice_show'));
+    }
 }
