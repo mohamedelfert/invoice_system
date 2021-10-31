@@ -29,8 +29,10 @@ Route::group(['middleware' => 'auth'],function (){
     Route::get('/section/{id}','InvoicesController@getProductsName');
     Route::get('/status_show/{id}', 'InvoicesController@payment_status')->name('status_show');
     Route::post('/status_update/{id}', 'InvoicesController@update_status')->name('status_update');
-    // these routes for print invoice.
+    // this route for print invoice.
     Route::get('/print_invoice/{id}', 'InvoicesController@print_invoice');
+    // this route for export invoices to Excel Sheet.
+    Route::get('invoices_export', 'InvoicesController@export');
     // these routes for invoices payment paid,unpaid,part paid,post paid.
     Route::get('invoices_paid', 'InvoicesController@show_paid_invoices');
     Route::get('invoices_unpaid', 'InvoicesController@show_unpaid_invoices');

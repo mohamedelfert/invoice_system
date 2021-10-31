@@ -85,7 +85,7 @@
                     <div class="card">
                         <div class="card-header pb-0">
                             <a class="btn btn-success" href="{{url('invoices/create')}}"><i class="mdi mdi-plus"></i> اضافه فاتوره </a>
-                            <a class="btn btn-primary"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
+                            <a class="btn btn-primary" href="{{url('invoices_export')}}"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

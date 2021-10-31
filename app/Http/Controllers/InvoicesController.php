@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\InvoicesExport;
 use App\Invoices;
 use App\InvoicesAttachments;
 use App\InvoicesDetails;
+use App\Notifications\AddNewInvoice;
 use App\Products;
 use App\Sections;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class InvoicesController extends Controller
 {
@@ -152,6 +158,12 @@ class InvoicesController extends Controller
 
             $file->move(public_path('Attachments/'.$invoice_number),$file_name);
         }
+
+        /**
+        * To send Email When add new invoice to user email he added this invoice
+         */
+        $the_user = User::first();
+        Notification::send($the_user,new AddNewInvoice($invoice_id));
 
         session()->flash('success','تم اضافه الفاتوره بنجاح');
         return redirect('invoices');
@@ -463,5 +475,13 @@ class InvoicesController extends Controller
         $title = 'معاينه الفاتوره للطباعه';
         $invoice_show = Invoices::find($id);
         return view('invoices.show_print_invoice',compact('title','invoice_show'));
+    }
+
+    /**
+     * this function to Export all Invoices To Excel sheet
+     **/
+    public function export()
+    {
+        return Excel::download(new InvoicesExport(), 'invoices.xlsx');
     }
 }
