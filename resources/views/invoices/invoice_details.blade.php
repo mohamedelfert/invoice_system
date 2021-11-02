@@ -198,6 +198,7 @@
 
                                                 <div class="tab-pane" id="tab6">
 
+                                                @can('اضافه مرفق')
                                                     <!-- Add New Attachment -->
                                                     <div class="col-md-12 col-xl-12 col-xs-12 col-sm-12">
                                                         <div class="card">
@@ -226,6 +227,7 @@
                                                         </div>
                                                     </div>
                                                     <!-- Add New Attachment -->
+                                                @endcan
 
                                                     <div class="card-body">
                                                         <div class="table-responsive">
@@ -253,9 +255,11 @@
                                                                                     <i class="mdi mdi-eye"></i> عرض </a>
                                                                                 <a class="btn btn-sm btn-info" href="{{url('download/'.$attach->invoice_number.'/'.$attach->file_name)}}">
                                                                                     <i class="mdi mdi-download"></i> تحميل </a>
-                                                                                <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale" data-toggle="modal" data-target="#delete_file"
-                                                                                   data-file_name="{{$attach->file_name}}" data-invoice_number="{{$attach->invoice_number}}" data-file_id="{{$attach->id}}">
-                                                                                    <i class="mdi mdi-delete"></i> حذف </a>
+                                                                                @can('حذف مرفق')
+                                                                                    <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale" data-toggle="modal" data-target="#delete_file"
+                                                                                       data-file_name="{{$attach->file_name}}" data-invoice_number="{{$attach->invoice_number}}" data-file_id="{{$attach->id}}">
+                                                                                        <i class="mdi mdi-delete"></i> حذف </a>
+                                                                                @endcan
                                                                             </td>
                                                                         </tr>
                                                                     @endforeach

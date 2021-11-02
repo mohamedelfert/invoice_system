@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,7 +26,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['middleware' => 'auth'],function (){
+Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('invoices','InvoicesController');
     // this route to get products name for users by ajax when he chose section.
@@ -35,23 +39,27 @@ Route::group(['middleware' => 'auth'],function (){
     Route::get('invoices_export', 'InvoicesController@export');
     // these routes for invoices payment paid,unpaid,part paid,post paid.
     Route::get('invoices_paid', 'InvoicesController@show_paid_invoices');
-    Route::get('invoices_unpaid', 'InvoicesController@show_unpaid_invoices');
-    Route::get('invoices_part_paid', 'InvoicesController@show_part_paid_invoices');
-    Route::get('invoices_post_paid', 'InvoicesController@show_post_paid_invoices');
+    Route::get('invoices_unpaid', 'InvoicesController@show_unpaid_invoices')->middleware('permission:الفواتير الغير مدفوعه');
+    Route::get('invoices_part_paid', 'InvoicesController@show_part_paid_invoices')->middleware('permission:الفواتير المدفوعه جزئيا');
+    Route::get('invoices_post_paid', 'InvoicesController@show_post_paid_invoices')->middleware('permission:الفواتير المؤجله');
 
-    Route::resource('invoices_archive','InvoicesArchiveController');
+    Route::resource('invoices_archive','InvoicesArchiveController')->middleware('permission:الفواتير المؤرشفه');
 
     Route::get('/invoice_details/{id}','InvoicesDetailsController@index');
     Route::get('/viewFile/{invoice_number}/{file_name}','InvoicesDetailsController@openFile');
     Route::get('/download/{invoice_number}/{file_name}','InvoicesDetailsController@downloadFile');
     Route::post('delete_file','InvoicesDetailsController@destroy')->name('delete_file');
 
-    Route::resource('sections','SectionController');
+    Route::resource('sections','SectionController')->middleware('permission:الاقسام');
 
-    Route::resource('products','ProductsController');
+    Route::resource('products','ProductsController')->middleware('permission:المنتجات');
 
     Route::resource('invoices_attachments','InvoicesAttachmentsController');
-});
 
+
+    Route::resource('roles', 'RoleController');
+    Route::resource('users', 'UserController');
+
+});
 
 Route::get('/{page}', 'AdminController@index');

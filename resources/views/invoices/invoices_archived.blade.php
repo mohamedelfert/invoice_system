@@ -127,13 +127,20 @@
                                                             data-toggle="dropdown" id="dropdownMenuButton" type="button"> العمليات <i class="fas fa-caret-down ml-1"></i>
                                                     </button>
                                                     <div  class="dropdown-menu tx-13">
-                                                        <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#restore" title="ارشفه">استرجاع
-                                                        </a>
-                                                        <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-invoice_number="{{ $invoice->invoice_number }}"
-                                                           data-toggle="modal" href="#force_delete" title="حذف">حذف
-                                                        </a>
+
+                                                        @can('استرجاع الفاتوره')
+                                                            <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
+                                                               data-id="{{ $invoice->id }}" data-toggle="modal" href="#restore" title="ارشفه">استرجاع
+                                                            </a>
+                                                        @endcan
+
+                                                        @can('حذف الفاتوره')
+                                                            <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
+                                                               data-id="{{ $invoice->id }}" data-invoice_number="{{ $invoice->invoice_number }}"
+                                                               data-toggle="modal" href="#force_delete" title="حذف">حذف
+                                                            </a>
+                                                        @endcan
+
                                                     </div>
                                                 </div>
                                             </td>

@@ -84,8 +84,15 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <a class="btn btn-success" href="{{url('invoices/create')}}"><i class="mdi mdi-plus"></i> اضافه فاتوره </a>
-                            <a class="btn btn-primary" href="{{url('invoices_export')}}"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
+
+                            @can('اضافه فاتوره')
+                                <a class="btn btn-success" href="{{url('invoices/create')}}"><i class="mdi mdi-plus"></i> اضافه فاتوره </a>
+                            @endcan
+
+                            @can('تصدير EXCEL')
+                                <a class="btn btn-primary" href="{{url('invoices_export')}}"><i class="mdi mdi-attachment"></i> تصدير Excel </a>
+                            @endcan
+
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -148,15 +155,30 @@
                                                             data-toggle="dropdown" id="dropdownMenuButton" type="button"> العمليات <i class="fas fa-caret-down ml-1"></i>
                                                     </button>
                                                     <div  class="dropdown-menu tx-13">
-                                                        <a class="dropdown-item text-info" href="{{url('invoices/' . $invoice->id . '/edit')}}"> تعديل </a>
-                                                        <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#archive" title="ارشفه">ارشفه
-                                                        </a>
-                                                        <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
-                                                        </a>
-                                                        <a class="dropdown-item text-warning" href="{{ URL::route('status_show', [$invoice->id]) }}"> تغيير الحاله </a>
-                                                        <a class="dropdown-item text-success" href="print_invoice/{{ $invoice->id }}"> طباعه </a>
+
+                                                        @can('تعديل الفاتوره')
+                                                            <a class="dropdown-item text-info" href="{{url('invoices/' . $invoice->id . '/edit')}}"> تعديل </a>
+                                                        @endcan
+
+                                                        @can('ارشفه الفاتوره')
+                                                            <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
+                                                               data-id="{{ $invoice->id }}" data-toggle="modal" href="#archive" title="ارشفه">ارشفه
+                                                            </a>
+                                                        @endcan
+
+                                                        @can('حذف الفاتوره')
+                                                            <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
+                                                               data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
+                                                            </a>
+                                                        @endcan
+
+                                                        @can('تغيير حاله الدفع')
+                                                            <a class="dropdown-item text-warning" href="{{ URL::route('status_show', [$invoice->id]) }}"> تغيير الحاله </a>
+                                                        @endcan
+
+                                                        @can('طباعه الفاتوره')
+                                                            <a class="dropdown-item text-success" href="print_invoice/{{ $invoice->id }}"> طباعه </a>
+                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>

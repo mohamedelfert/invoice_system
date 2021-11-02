@@ -121,15 +121,31 @@
                                                             data-toggle="dropdown" id="dropdownMenuButton" type="button"> العمليات <i class="fas fa-caret-down ml-1"></i>
                                                     </button>
                                                     <div  class="dropdown-menu tx-13">
-                                                        <a class="dropdown-item text-info" href="{{url('invoices/' . $invoice->id . '/edit')}}"> تعديل </a>
-                                                        <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#archive" title="ارشفه">ارشفه
-                                                        </a>
-                                                        <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
-                                                           data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
-                                                        </a>
-                                                        <a class="dropdown-item text-warning" href="{{ URL::route('status_show', [$invoice->id]) }}"> تغيير الحاله </a>
-                                                        <a class="dropdown-item text-success" href="print_invoice/{{ $invoice->id }}"> طباعه </a>
+
+                                                        @can('تعديل الفاتوره')
+                                                            <a class="dropdown-item text-info" href="{{url('invoices/' . $invoice->id . '/edit')}}"> تعديل </a>
+                                                        @endcan
+
+                                                        @can('ارشفه الفاتوره')
+                                                            <a class="modal-effect dropdown-item text-gray" data-effect="effect-scale"
+                                                               data-id="{{ $invoice->id }}" data-toggle="modal" href="#archive" title="ارشفه">ارشفه
+                                                            </a>
+                                                        @endcan
+
+                                                        @can('حذف الفاتوره')
+                                                            <a class="modal-effect dropdown-item text-danger" data-effect="effect-scale"
+                                                               data-id="{{ $invoice->id }}" data-toggle="modal" href="#force_delete" title="حذف">حذف
+                                                            </a>
+                                                        @endcan
+
+                                                        @can('تغيير حاله الدفع')
+                                                            <a class="dropdown-item text-warning" href="{{ URL::route('status_show', [$invoice->id]) }}"> تغيير الحاله </a>
+                                                        @endcan
+
+                                                        @can('طباعه الفاتوره')
+                                                            <a class="dropdown-item text-success" href="print_invoice/{{ $invoice->id }}"> طباعه </a>
+                                                        @endcan
+
                                                     </div>
                                                 </div>
                                             </td>

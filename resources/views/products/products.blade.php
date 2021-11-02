@@ -59,7 +59,11 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <a class="modal-effect btn btn-success" data-effect="effect-scale" data-toggle="modal" href="#modaldemo8"><i class="mdi mdi-plus"></i> اضافة منتج </a>
+
+                            @can('اضافه منتج')
+                                <a class="modal-effect btn btn-success" data-effect="effect-scale" data-toggle="modal" href="#modaldemo8"><i class="mdi mdi-plus"></i> اضافة منتج </a>
+                            @endcan
+
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -82,15 +86,20 @@
                                             <td>{{$product->description}}</td>
                                             <td>{{$product->getSectionName->section_name}}</td>
                                             <td class="text-center">
-                                                <a class="modal-effect btn btn-sm btn-info" data-effect="effect-scale"
-                                                   data-id="{{ $product->id }}" data-product_name="{{ $product->product_name }}"
-                                                   data-description="{{ $product->description }}" data-section_id="{{ $product->section_id }}"
-                                                   data-toggle="modal" href="#exampleModal2" title="تعديل"><i class="las la-pen"></i>
-                                                </a>
-                                                <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale"
-                                                   data-id="{{ $product->id }}" data-product_name="{{ $product->product_name }}"
-                                                   data-toggle="modal" href="#modaldemo9" title="حذف"><i class="las la-trash"></i>
-                                                </a>
+
+                                                @can('تعديل منتج')
+                                                    <a class="modal-effect btn btn-sm btn-info" data-effect="effect-scale"
+                                                       data-id="{{ $product->id }}" data-product_name="{{ $product->product_name }}"
+                                                       data-description="{{ $product->description }}" data-section_id="{{ $product->section_id }}"
+                                                       data-toggle="modal" href="#exampleModal2" title="تعديل"><i class="las la-pen"></i>
+                                                    </a>
+                                                @endcan
+                                                @can('حذف منتج')
+                                                    <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale"
+                                                       data-id="{{ $product->id }}" data-product_name="{{ $product->product_name }}"
+                                                       data-toggle="modal" href="#modaldemo9" title="حذف"><i class="las la-trash"></i>
+                                                    </a>
+                                                @endcan
                                                 {{--{!! Form::open(['url'=>'products/'.$product->id,'method'=>'delete','style'=>'display:inline']) !!}--}}
                                                 {{--{!! Form::text('id',$product->id,['hidden']) !!}--}}
                                                 {{--{!! Form::submit('Delete',['class'=>'btn btn-danger small']) !!}--}}
