@@ -1,7 +1,4 @@
 @extends('layouts.master')
-@section('title')
-    {{$title}}
-@endsection
 @section('css')
     <!-- Internal Data table css -->
     <link href="{{ URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" />
@@ -10,15 +7,20 @@
     <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-    <!--Internal   Notify -->
-    <link href="{{URL::asset('assets/plugins/notify/css/notifIt.css')}}" rel="stylesheet"/>
+    <!-- Internal Spectrum-colorpicker css -->
+    <link href="{{ URL::asset('assets/plugins/spectrum-colorpicker/spectrum.css') }}" rel="stylesheet">
+    <!-- Internal Select2 css -->
+    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+@section('title')
+    {{$title}}
+@stop
 @endsection
 @section('page-header')
     <!-- breadcrumb -->
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">التقارير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ تقارير الفواتير</span>
+                <h4 class="content-title mb-0 my-auto">التقارير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ تقرير الفواتير</span>
             </div>
         </div>
     </div>
@@ -26,56 +28,146 @@
 @endsection
 @section('content')
 
+    <!-- row -->
+    <div class="row">
 
+        <div class="col-xl-12">
+            <div class="card mg-b-20">
 
+                <div class="card-header pb-0">
 
-            <!-- row -->
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table text-md-nowrap" id="example1">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">#</th>
-                                            <th class="border-bottom-0">رقم الفاتوره</th>
-                                            <th class="border-bottom-0">تاريخ الفاتوره</th>
-                                            <th class="border-bottom-0">تاريخ الاستحقاق</th>
-                                            <th class="border-bottom-0">المنتج</th>
-                                            <th class="border-bottom-0">القسم</th>
-                                            <th class="border-bottom-0">الخصم</th>
-                                            <th class="border-bottom-0">نسبه الضريبه</th>
-                                            <th class="border-bottom-0">قيمه الضريبه</th>
-                                            <th class="border-bottom-0">الاجمالي</th>
-                                            <th class="border-bottom-0">الحاله</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th class="border-bottom-0">#</th>
-                                            <th class="border-bottom-0">رقم الفاتوره</th>
-                                            <th class="border-bottom-0">تاريخ الفاتوره</th>
-                                            <th class="border-bottom-0">تاريخ الاستحقاق</th>
-                                            <th class="border-bottom-0">المنتج</th>
-                                            <th class="border-bottom-0">القسم</th>
-                                            <th class="border-bottom-0">الخصم</th>
-                                            <th class="border-bottom-0">نسبه الضريبه</th>
-                                            <th class="border-bottom-0">قيمه الضريبه</th>
-                                            <th class="border-bottom-0">الاجمالي</th>
-                                            <th class="border-bottom-0">الحاله</th>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <form action="/invoices_search" method="POST" autocomplete="off">
+                        {{ csrf_field() }}
+                        <div class="col-lg-3">
+                            <label class="rdiobox">
+                                <input type="radio" name="rdio" value="1" id="type" checked>
+                                <span>بحث بنوع الفاتورة</span>
+                            </label>
+                        </div>
+
+                        <div class="col-lg-3 mg-t-20 mg-lg-t-0">
+                            <label class="rdiobox">
+                                <input type="radio" name="rdio" value="2">
+                                <span>بحث برقم الفاتورة</span>
+                            </label>
+                        </div>
+
+                        <div class="row" style="margin: 30px 0 30px 0;">
+                            <div class="col-lg-3 mg-t-20 mg-lg-t-0" id="invoice_type">
+                                <p class="mg-b-10">تحديد نوع الفواتير</p>
+                                <select class="form-control select2" name="invoice_type" required>
+                                    <option value="{{$type ?? 'حدد نوع الفواتير'}}" selected>{{$type ?? 'حدد نوع الفواتير'}}</option>
+                                    <option value="الكل">جميع الفواتير</option>
+                                    <option value="مدفوعه">الفواتير المدفوعه</option>
+                                    <option value="غير مدفوعه">الفواتير الغير مدفوعه</option>
+                                    <option value="مدفوعه جزئيا">الوفاتير المدفوعه جزئيا</option>
+                                    <option value="مؤجله">الفواتير المؤجله</option>
+
+                                </select>
+                            </div><!-- col-4 -->
+
+                            <div class="col-lg-3 mg-t-20 mg-lg-t-0" id="invoice_number">
+                                <p class="mg-b-10">البحث برقم الفاتورة</p>
+                                <input type="text" class="form-control" id="invoice_number" name="invoice_number">
+                            </div><!-- col-4 -->
+
+                            <div class="col-lg-3" id="start_at">
+                                <label for="exampleFormControlSelect1">من تاريخ</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control fc-datepicker" value="{{$start_at ?? ''}}" name="start_at" placeholder="YYYY-MM-DD">
+                                </div><!-- input-group -->
+                            </div>
+
+                            <div class="col-lg-3" id="end_at">
+                                <label for="exampleFormControlSelect1">الي تاريخ</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control fc-datepicker" name="end_at" value="{{$end_at ?? ''}}" placeholder="YYYY-MM-DD">
+                                </div><!-- input-group -->
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-sm-1 col-md-1">
+                                <button class="btn btn-primary btn-block">بحث</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        @if (isset($invoices))
+                            <table class="table text-md-nowrap" id="example1">
+                                <thead>
+                                    <tr>
+                                        <th class="border-bottom-0">#</th>
+                                        <th class="border-bottom-0">رقم الفاتوره</th>
+                                        <th class="border-bottom-0">تاريخ الفاتوره</th>
+                                        <th class="border-bottom-0">تاريخ الاستحقاق</th>
+                                        <th class="border-bottom-0">المنتج</th>
+                                        <th class="border-bottom-0">القسم</th>
+                                        <th class="border-bottom-0">الخصم</th>
+                                        <th class="border-bottom-0">نسبه الضريبه</th>
+                                        <th class="border-bottom-0">قيمه الضريبه</th>
+                                        <th class="border-bottom-0">الاجمالي</th>
+                                        <th class="border-bottom-0">الحاله</th>
+                                        <th class="border-bottom-0">ملاحظات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $i = 1; ?>
+                                    @foreach($invoices as $invoice)
+                                        <tr>
+                                            <td>{{$i++}}</td>
+                                            <td>
+                                                <a href="{{url('invoice_details/' . $invoice->id)}}">{{$invoice->invoice_number}}</a>
+                                            </td>
+                                            <td>{{$invoice->invoice_date}}</td>
+                                            <td>{{$invoice->due_date}}</td>
+                                            <td>{{$invoice->getProductName->product_name}}</td>
+                                            <td>{{$invoice->getSectionName->section_name}}</td>
+                                            <td>{{$invoice->discount}}</td>
+                                            <td>{{$invoice->rate_vat}}</td>
+                                            <td>{{$invoice->value_vat}}</td>
+                                            <td>{{$invoice->total}}</td>
+                                            <td>
+                                                @if($invoice->value_status == 1)
+                                                    <span class="badge badge-pill badge-danger">{{$invoice->status}}</span>
+                                                @elseif($invoice->value_status == 2)
+                                                    <span class="badge badge-pill badge-success">{{$invoice->status}}</span>
+                                                @elseif($invoice->value_status == 3)
+                                                    <span class="badge badge-pill badge-warning">{{$invoice->status}}</span>
+                                                @elseif($invoice->value_status == 4)
+                                                    <span class="badge badge-pill badge-info">{{$invoice->status}}</span>
+                                                @endif
+                                            </td>
+                                            <td>{{$invoice->note}}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
                     </div>
                 </div>
-            </div>
-            <!-- row closed -->
 
+            </div>
         </div>
-        <!-- Container closed -->
+
+    </div>
+    <!-- row closed -->
+    </div>
+    <!-- Container closed -->
     </div>
     <!-- main-content closed -->
 @endsection
@@ -99,9 +191,45 @@
     <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.bootstrap4.min.js') }}"></script>
     <!--Internal  Datatable js -->
     <script src="{{ URL::asset('assets/js/table-data.js') }}"></script>
-    <!--Internal  Notify js -->
-    <script src="{{URL::asset('assets/plugins/notify/js/notifIt.js')}}"></script>
-    <script src="{{URL::asset('assets/plugins/notify/js/notifit-custom.js')}}"></script>
-    <!-- Internal Modal js-->
-    <script src="{{URL::asset('assets/js/modal.js')}}"></script>
+    <!--Internal  Datepicker js -->
+    <script src="{{ URL::asset('assets/plugins/jquery-ui/ui/widgets/datepicker.js') }}"></script>
+    <!--Internal  jquery.maskedinput js -->
+    <script src="{{ URL::asset('assets/plugins/jquery.maskedinput/jquery.maskedinput.js') }}"></script>
+    <!--Internal  spectrum-colorpicker js -->
+    <script src="{{ URL::asset('assets/plugins/spectrum-colorpicker/spectrum.js') }}"></script>
+    <!-- Internal Select2.min js -->
+    <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+    <!--Internal Ion.rangeSlider.min js -->
+    <script src="{{ URL::asset('assets/plugins/ion-rangeslider/js/ion.rangeSlider.min.js') }}"></script>
+    <!--Internal  jquery-simple-datetimepicker js -->
+    <script src="{{ URL::asset('assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js') }}"></script>
+    <!-- Ionicons js -->
+    <script src="{{ URL::asset('assets/plugins/jquery-simple-datetimepicker/jquery.simple-dtpicker.js') }}"></script>
+    <!--Internal  pickerjs js -->
+    <script src="{{ URL::asset('assets/plugins/pickerjs/picker.min.js') }}"></script>
+    <!-- Internal form-elements js -->
+    <script src="{{ URL::asset('assets/js/form-elements.js') }}"></script>
+    <script>
+        var date = $('.fc-datepicker').datepicker({
+            dateFormat: 'yy-mm-dd'
+        }).val();
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#invoice_number').hide();
+            $('input[type="radio"]').click(function() {
+                if ($(this).attr('id') == 'type') {
+                    $('#invoice_number').hide();
+                    $('#invoice_type').show();
+                    $('#start_at').show();
+                    $('#end_at').show();
+                } else {
+                    $('#invoice_number').show();
+                    $('#invoice_type').hide();
+                    $('#start_at').hide();
+                    $('#end_at').hide();
+                }
+            });
+        });
+    </script>
 @endsection

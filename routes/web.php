@@ -57,6 +57,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('invoices_attachments','InvoicesAttachmentsController');
 
     Route::get('invoices_report','InvoicesReportController@index');
+    Route::post('invoices_search','InvoicesReportController@search');
 
 
     Route::resource('roles', 'RoleController');
