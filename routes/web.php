@@ -56,6 +56,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('invoices_attachments','InvoicesAttachmentsController');
 
+    Route::get('invoices_report','InvoicesReportController@index');
+
 
     Route::resource('roles', 'RoleController');
     Route::resource('users', 'UserController');
@@ -63,3 +65,7 @@ Route::group(['middleware' => ['auth']], function() {
 });
 
 Route::get('/{page}', 'AdminController@index');
+
+Route::fallback(function (){
+    return 'Hm,This Page Not Found Here!';
+});
