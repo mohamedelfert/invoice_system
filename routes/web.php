@@ -59,6 +59,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('invoices_report','InvoicesReportController@index');
     Route::post('invoices_search','InvoicesReportController@search');
 
+    Route::get('customers_report','CustomersReportController@index');
+    Route::post('customers_search','CustomersReportController@search');
+
 
     Route::resource('roles', 'RoleController');
     Route::resource('users', 'UserController');

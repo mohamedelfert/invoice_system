@@ -20,7 +20,7 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">التقارير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ تقرير الفواتير</span>
+                <h4 class="content-title mb-0 my-auto">التقارير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ تقرير العملاء</span>
             </div>
         </div>
     </div>
@@ -36,39 +36,26 @@
 
                 <div class="card-header pb-0">
 
-                    <form action="/invoices_search" method="POST" autocomplete="off">
+                    <form action="/customers_search" method="POST" autocomplete="off">
                         {{ csrf_field() }}
-                        <div class="col-lg-3">
-                            <label class="rdiobox">
-                                <input type="radio" name="rdio" value="1" id="type" checked>
-                                <span>بحث بنوع الفاتورة</span>
-                            </label>
-                        </div>
 
-                        <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-                            <label class="rdiobox">
-                                <input type="radio" name="rdio" value="2">
-                                <span>بحث برقم الفاتورة</span>
-                            </label>
-                        </div>
-
-                        <div class="row" style="margin: 30px 0 30px 0;">
-                            <div class="col-lg-3 mg-t-20 mg-lg-t-0" id="invoice_type">
-                                <p class="mg-b-10">تحديد نوع الفواتير</p>
-                                <select class="form-control select2" name="invoice_type" required>
-                                    <option value="{{$type ?? 'حدد نوع الفواتير'}}" selected>{{$type ?? 'حدد نوع الفواتير'}}</option>
-                                    <option value="الكل">جميع الفواتير</option>
-                                    <option value="مدفوعه">الفواتير المدفوعه</option>
-                                    <option value="غير مدفوعه">الفواتير الغير مدفوعه</option>
-                                    <option value="مدفوعه جزئيا">الوفاتير المدفوعه جزئيا</option>
-                                    <option value="مؤجله">الفواتير المؤجله</option>
+                        <div class="row" style="margin-bottom: 30px;">
+                            <div class="col">
+                                <label for="section_id" class="control-label">القسم</label>
+                                <select name="section_id" id="section_id" class="form-control SlectBox" onclick="console.log($(this).val())"
+                                        onchange="console.log('Change Is Firing')">
+                                    <option value="" selected disabled>حدد القسم</option>
+                                    @foreach ($sections as $section)
+                                        <option value="{{ $section->id }}"> {{ $section->section_name }}</option>
+                                    @endforeach
                                 </select>
-                            </div><!-- col-4 -->
+                            </div>
 
-                            <div class="col-lg-3 mg-t-20 mg-lg-t-0" id="invoice_number">
-                                <p class="mg-b-10">البحث برقم الفاتورة</p>
-                                <input type="text" class="form-control" id="invoice_number" name="invoice_number">
-                            </div><!-- col-4 -->
+                            <div class="col">
+                                <label for="product_id" class="control-label">المنتج</label>
+                                <select id="product_id" name="product_id" class="form-control">
+                                </select>
+                            </div>
 
                             <div class="col-lg-3" id="start_at">
                                 <label for="exampleFormControlSelect1">من تاريخ</label>
@@ -213,22 +200,29 @@
             dateFormat: 'yy-mm-dd'
         }).val();
     </script>
+
+    {{-- Start This Ajax Code To Get Product Name And ID --}}
     <script>
         $(document).ready(function() {
-            $('#invoice_number').hide();
-            $('input[type="radio"]').click(function() {
-                if ($(this).attr('id') == 'type') {
-                    $('#invoice_number').hide();
-                    $('#invoice_type').show();
-                    $('#start_at').show();
-                    $('#end_at').show();
+            $('select[name="section_id"]').on('change', function() {
+                var section_id = $(this).val();
+                if (section_id) {
+                    $.ajax({
+                        url: "{{ URL::to('section') }}/" + section_id,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="product_id"]').empty();
+                            $.each(data, function(key, value) {
+                                $('select[name="product_id"]').append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        },
+                    });
                 } else {
-                    $('#invoice_number').show();
-                    $('#invoice_type').hide();
-                    $('#start_at').hide();
-                    $('#end_at').hide();
+                    console.log('AJAX Load Did Not Work');
                 }
             });
         });
     </script>
+    {{-- End This Ajax Code To Get Product Name And ID --}}
 @endsection
