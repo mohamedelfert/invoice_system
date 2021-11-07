@@ -18,11 +18,24 @@ class CustomersReportController extends Controller
     public function search(Request $request){
 
         /**
+         * if user select search with without section_id , product_id and specify date
+         **/
+        if ($request->section_id == '' && $request->product_id == '' && $request->start_at == '' && $request->end_at == ''){
+
+            $invoices = Invoices::get();
+            $title    = 'تقارير العملاء';
+            $sections = Sections::all();
+            return view('reports.customers_report',compact('invoices','sections','title'));
+
+        }
+
+        /**
          * if user select search with section_id and product_id without specify date
          **/
-        if ($request->section_id && $request->product_id && $request->start_at == '' && $request->end_at == ''){
+        elseif ($request->section_id && $request->product_id && $request->start_at == '' && $request->end_at == ''){
 
-            $invoices = Invoices::select('*')->where('section_id','=',$request->section_id)->where('product_id','=',$request->product_id)->get();
+            $invoices = Invoices::select('*')->where('section_id','=',$request->section_id)
+                                    ->where('product_id','=',$request->product_id)->get();
             $title    = 'تقارير العملاء';
             $sections = Sections::all();
             return view('reports.customers_report',compact('invoices','sections','title'));

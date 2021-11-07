@@ -65,7 +65,8 @@ class InvoicesReportController extends Controller
 
                 $start_at = date($request->start_at);
                 $end_at   = date($request->end_at);
-                $invoices = Invoices::whereBetween('invoice_date',[$start_at,$end_at])->where('status','=',$request->invoice_type)->get();
+                $invoices = Invoices::whereBetween('invoice_date',[$start_at,$end_at])
+                                        ->where('status','=',$request->invoice_type)->get();
                 $type = $request->invoice_type;
                 $title = 'تقارير الفاوتير';
                 return view('reports.invoices_report',compact('invoices','start_at','end_at','type','title'));
