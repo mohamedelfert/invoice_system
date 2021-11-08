@@ -160,9 +160,9 @@ class InvoicesController extends Controller
         }
 
         /**
-        * To send Email When add new invoice to user email he added this invoice
+        * To send Email When add new invoice to user email he added this invoice and database notification
          */
-        $the_user = User::first();
+        $the_user = User::get();
         Notification::send($the_user,new AddNewInvoice($invoice_id));
 
         session()->flash('success','تم اضافه الفاتوره بنجاح');
@@ -483,5 +483,16 @@ class InvoicesController extends Controller
     public function export()
     {
         return Excel::download(new InvoicesExport(), 'invoices.xlsx');
+    }
+
+    /**
+     * this function to Mark all Notifications As Read
+     **/
+    public function mark_all_read(){
+        $userUnreadNotifications = auth()->user()->unreadNotifications;
+        if ($userUnreadNotifications){
+            $userUnreadNotifications->markAsRead();
+            return back();
+        }
     }
 }

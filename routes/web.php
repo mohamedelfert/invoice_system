@@ -62,6 +62,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('customers_report','CustomersReportController@index');
     Route::post('customers_search','CustomersReportController@search');
 
+    Route::get('mark_all_read','InvoicesController@mark_all_read');
+
 
     Route::resource('roles', 'RoleController');
     Route::resource('users', 'UserController');
