@@ -1,8 +1,8 @@
 @extends('layouts.master')
-@section('css')
 @section('title')
     {{$title}}
 @stop
+@section('css')
     <!-- Internal Nice-select css  -->
     <link href="{{URL::asset('assets/plugins/jquery-nice-select/css/nice-select.css')}}" rel="stylesheet" />
 @endsection

@@ -68,6 +68,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', 'RoleController');
     Route::resource('users', 'UserController');
 
+    Route::get('profile/{id}','UserController@user_profile');
+
 });
 
 Route::get('/{page}', 'AdminController@index');

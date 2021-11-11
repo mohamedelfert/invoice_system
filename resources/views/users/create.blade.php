@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('css')
-    <!-- Internal Nice-select css  -->
-    <link href="{{URL::asset('assets/plugins/jquery-nice-select/css/nice-select.css')}}" rel="stylesheet" />
 @section('title')
     {{$title}}
 @endsection
+@section('css')
+    <!-- Internal Nice-select css  -->
+    <link href="{{URL::asset('assets/plugins/jquery-nice-select/css/nice-select.css')}}" rel="stylesheet" />
 @section('page-header')
     <!-- breadcrumb -->
     <div class="breadcrumb-header justify-content-between">

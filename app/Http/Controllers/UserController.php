@@ -170,4 +170,14 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')->with('success','تم حذف المستخدم بنجاح');
     }
+
+    /**
+     * show user profile
+     */
+    public function user_profile($id)
+    {
+        $title = 'فواتيري _ بيانات العضو';
+        $user = User::find($id);
+        return view('users.show',compact('title','user'));
+    }
 }
