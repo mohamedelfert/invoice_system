@@ -85,9 +85,9 @@
                         <div class="col-lg-6">
                             <label class="form-label">صلاحية المستخدم</label>
                             <select name="role_name" id="select-beast" class="form-control nice-select custom-select">
-                                <option value="superAdmin" {{$user->role_name === 'superAdmin' ? 'selected':''}}>Super Admin</option>
-                                <option value="admin" {{$user->role_name === 'admin' ? 'selected':''}}>Admin</option>
-                                <option value="user" {{$user->role_name === 'user' ? 'selected':''}}>User</option>
+                                @foreach($roles as $key => $value)
+                                    <option value="{{ $key }}" {{ $user->role_name === $key ? 'selected':'' }}> {{ $value }} </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
